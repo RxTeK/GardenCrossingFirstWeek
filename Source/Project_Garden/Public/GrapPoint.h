@@ -23,7 +23,7 @@ class PROJECT_GARDEN_API AGrapPoint : public AActor
 public:	
 	// Sets default values for this actor's properties
 	AGrapPoint();
-	void CanGrap();
+	void CanGrap(bool);
 
 protected:
 	// Called when the game starts or when spawned

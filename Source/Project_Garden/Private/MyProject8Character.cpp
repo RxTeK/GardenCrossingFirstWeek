@@ -17,6 +17,8 @@
 #include "GrapPoint.h"
 #include "InputActionValue.h"
 #include "KismetTraceUtils.h"
+#include "Components/SphereComponent.h"
+#include "DataWrappers/ChaosVDQueryDataWrappers.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -57,6 +59,11 @@ AMyProject8Character::AMyProject8Character()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	Sphere = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere"));
+	Sphere->SetupAttachment(RootComponent);
+	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AMyProject8Character::OnComponentOverlap);
+	Sphere->OnComponentEndOverlap.AddDynamic(this, &AMyProject8Character::OnComponentEndOverlap);
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -65,6 +72,54 @@ void AMyProject8Character::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+	
+}
+
+void AMyProject8Character::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+	
+	if (GrapPoints.size() > 0)
+	{
+		AGrapPoint* BestGrapPoint = GrapPoints[0];
+		for (AGrapPoint* GrapPoint : GrapPoints)
+		{
+			if (height(BestGrapPoint) > height(GrapPoint))
+			{
+				BestGrapPoint = GrapPoint;
+				
+			}
+		}
+	}
+	
+	else if (GrapPoints.size() > 0)
+	{
+		for (AGrapPoint*  Points : GrapPoints)
+		{
+			Points->CanGrap(false);
+		}
+		GrapPoints.clear();
+	}
+}
+
+void AMyProject8Character::OnComponentOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (AGrapPoint* NewPoint = Cast<AGrapPoint>(OtherActor))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Grap Points!"));
+		NewPoint->CanGrap(true);
+		GrapPoints.push_back(NewPoint);
+	}
+}
+
+void AMyProject8Character::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (AGrapPoint* NewPoint = Cast<AGrapPoint>(OtherActor))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Grap Points None!"));
+		NewPoint->CanGrap(false);
+		GrapPoints.erase(std::ranges::find(GrapPoints, NewPoint));
+	}
 }
 
 
@@ -142,7 +197,7 @@ void AMyProject8Character::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMyProject8Character::Look);
 
 		//Interact
-		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Ongoing, this, &AMyProject8Character::Interaction);
+		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Triggered, this, &AMyProject8Character::Interaction);
 	}
 	else
 	{
@@ -188,26 +243,11 @@ void AMyProject8Character::Look(const FInputActionValue& Value)
 
 void AMyProject8Character::Interaction()
 {
-	TArray<FHitResult> HitResults;
-	FVector StartLocation = GetActorLocation();
-	ECollisionChannel Trace = ECollisionChannel::ECC_GameTraceChannel2;
-	FCollisionQueryParams params;
-	float Radus = 1000.0f;
-	params.AddIgnoredActor(this);
-	GetWorld()->SweepMultiByChannel(HitResults, StartLocation, StartLocation, FQuat(),Trace,FCollisionShape::MakeSphere(Radus),params);
-	DrawDebugSweptSphere(GetWorld(),StartLocation,StartLocation,Radus, FColor::Red,false);
-	if (HitResults.Num() > 0)
-	{
-		GrapPoints.clear();
-		for (FHitResult HitResult : HitResults)
-		{
-			if (AGrapPoint* GrapPoint = Cast<AGrapPoint>(HitResult.GetActor()))
-			{
-				GrapPoints.insert(GrapPoints.end(),GrapPoint);
-				GrapPoint->CanGrap();
-			} 
-		}
-		
-	}
 	
+}
+
+float AMyProject8Character::height(AGrapPoint* Point)
+{
+	
+	return 0.0f;
 }

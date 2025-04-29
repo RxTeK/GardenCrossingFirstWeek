@@ -36,11 +36,11 @@ void AGrapPoint::Tick(float DeltaTime)
 
 }
 
-void AGrapPoint::CanGrap()
+void AGrapPoint::CanGrap(bool Grap)
 {
 	if (Widget != nullptr)
 	{
-		Widget->SetVisibility(true);
+		Widget->SetVisibility(Grap);
 	}
 	
 

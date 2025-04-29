@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "SlowFallComponent.generated.h"
 
+class AMyProject8Character;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT_GARDEN_API USlowFallComponent : public UActorComponent
@@ -23,6 +24,25 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	
+	UFUNCTION()
+	void SlowFallOn();
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "SlowFall")
+	float GravityScaleClassic;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "SlowFall")
+	float AirControlClassic;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "SlowFall")
+	float GravityScaleGlide;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "SlowFall")
+	float AirControlGlide;
+	
+private:
+	UPROPERTY()
+	TObjectPtr<AMyProject8Character> CharaRef;
+
+	UPROPERTY()
+	bool Plane = true;
+	
 		
 };

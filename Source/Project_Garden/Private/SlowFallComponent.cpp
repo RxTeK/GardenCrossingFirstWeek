@@ -1,7 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
+#include "MyProject8Character.h"
 #include "SlowFallComponent.h"
+
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values for this component's properties
 USlowFallComponent::USlowFallComponent()
@@ -19,7 +21,12 @@ void USlowFallComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	CharaRef = Cast<AMyProject8Character>(GetOwner());
+
+	if (!CharaRef)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BP_CameraComponent: CharaRef est NULL !"));
+	}
 	
 }
 
@@ -30,5 +37,25 @@ void USlowFallComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+}
+
+void USlowFallComponent::SlowFallOn()
+{
+	if (!CharaRef && CharaRef->GetCharacterMovement()->IsFalling())
+	{
+		if(Plane)
+		{
+			Plane = false;
+			CharaRef->GetCharacterMovement()->Velocity.Z = 0;
+			CharaRef->GetCharacterMovement()->GravityScale = GravityScaleGlide;
+			CharaRef->GetCharacterMovement()->AirControl = AirControlGlide;
+		}
+		else
+		{
+			CharaRef->GetCharacterMovement()->GravityScale = GravityScaleClassic;
+			CharaRef->GetCharacterMovement()->AirControl = AirControlClassic;
+			Plane = true;
+		}
+	}
 }
 

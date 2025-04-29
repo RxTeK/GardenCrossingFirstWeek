@@ -67,6 +67,53 @@ void AMyProject8Character::BeginPlay()
 	Super::BeginPlay();
 }
 
+
+void AMyProject8Character::HandleJumpInput()
+{
+	if (bCanJump)
+	{
+		bCanJump = false;
+		GetWorldTimerManager().ClearTimer(JumpResetTimerHandle);
+
+		// Saut vers le haut
+		LaunchCharacter(FVector(0.f, 0.f, JumpImpulse), false, false);
+
+		// Appel du slow fall
+		if (SlowFallComponent)
+		{
+			UFunction* SlowFallFunc = SlowFallComponent->FindFunction(FName("SlowFallOn"));
+			if (SlowFallFunc)
+			{
+				SlowFallComponent->ProcessEvent(SlowFallFunc, nullptr);
+			}
+		}
+	}
+}
+
+void AMyProject8Character::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)
+{
+	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
+
+	if (GetCharacterMovement()->MovementMode == MOVE_Falling)
+	{
+		bCanJump = true;
+
+		GetWorldTimerManager().SetTimer(
+			JumpResetTimerHandle,
+			this,
+			&AMyProject8Character::DisableJump,
+			CanJumpDuration,
+			false
+		);
+	}
+}
+
+void AMyProject8Character::DisableJump()
+{
+	bCanJump = false;
+}
+
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 

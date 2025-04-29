@@ -50,6 +50,7 @@ class AMyProject8Character : public ACharacter
 	/** Interaction Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* InteractionAction;
+	
 
 	
 
@@ -57,6 +58,9 @@ public:
 	AMyProject8Character();
 	std::vector <AGrapPoint*> GrapPoints;
 	bool OnSpline = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Saut")
+	UActorComponent* SlowFallComponent;
 
 protected:
 
@@ -81,5 +85,27 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+private:
+
+	UPROPERTY()
+	bool bCanJump;
+	
+	UFUNCTION()
+	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;
+
+	UFUNCTION()
+	void DisableJump();
+
+	UFUNCTION()
+	void HandleJumpInput();
+	
+	UPROPERTY()
+	float JumpImpulse = 700.0f;
+
+	UPROPERTY()
+	float CanJumpDuration = 0.2f;
+
+	FTimerHandle JumpResetTimerHandle;
 };
 

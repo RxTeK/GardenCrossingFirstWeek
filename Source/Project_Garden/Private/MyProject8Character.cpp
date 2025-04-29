@@ -143,7 +143,7 @@ void AMyProject8Character::Interaction()
 {
 	TArray<FHitResult> HitResults;
 	FVector StartLocation = GetActorLocation();
-	ECollisionChannel Trace = ECollisionChannel::ECC_GameTraceChannel1;
+	ECollisionChannel Trace = ECollisionChannel::ECC_GameTraceChannel2;
 	FCollisionQueryParams params;
 	float Radus = 1000.0f;
 	params.AddIgnoredActor(this);

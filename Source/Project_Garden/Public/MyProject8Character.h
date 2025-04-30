@@ -94,7 +94,6 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-<<<<<<< Updated upstream
 private:
 
 	UPROPERTY()
@@ -116,13 +115,12 @@ private:
 	float CanJumpDuration = 0.2f;
 
 	FTimerHandle JumpResetTimerHandle;
-=======
+
 	UFUNCTION()
 	void OnComponentOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
->>>>>>> Stashed changes
 };
 

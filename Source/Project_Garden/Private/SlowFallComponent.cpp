@@ -41,8 +41,9 @@ void USlowFallComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 void USlowFallComponent::SlowFallOn()
 {
-	if (!CharaRef && CharaRef->GetCharacterMovement()->IsFalling())
+	if (CharaRef && CharaRef->GetCharacterMovement()->IsFalling())
 	{
+		UE_LOG(LogTemp, Error, TEXT("La ca marche"));
 		if(Plane)
 		{
 			Plane = false;
@@ -57,5 +58,6 @@ void USlowFallComponent::SlowFallOn()
 			Plane = true;
 		}
 	}
+	UE_LOG(LogTemp, Error, TEXT("NOOOOOOOOON"));
 }
 

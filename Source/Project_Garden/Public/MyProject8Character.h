@@ -8,6 +8,7 @@
 #include "GrapPoint.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
+#include "SlowFallComponent.h"
 #include "Logging/LogMacros.h"
 #include "MyProject8Character.generated.h"
 
@@ -112,6 +113,9 @@ private:
 	float JumpImpulse = 700.0f;
 
 	UPROPERTY()
+	FVector LaunchVelocity = FVector(0, 0, 700);
+
+	UPROPERTY()
 	float CanJumpDuration = 0.2f;
 
 	FTimerHandle JumpResetTimerHandle;
@@ -122,5 +126,10 @@ private:
 	UFUNCTION()
 	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	UFUNCTION()
+	void newJump();
+
+	UFUNCTION()
+	void newStopJumping() ;
 };
 

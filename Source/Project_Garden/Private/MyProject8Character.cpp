@@ -64,6 +64,8 @@ AMyProject8Character::AMyProject8Character()
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AMyProject8Character::OnComponentOverlap);
 	Sphere->OnComponentEndOverlap.AddDynamic(this, &AMyProject8Character::OnComponentEndOverlap);
 
+	SlowFallComponent = CreateDefaultSubobject<USlowFallComponent>(TEXT("SlowFallComponent"));
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -72,7 +74,6 @@ void AMyProject8Character::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
-	
 }
 
 void AMyProject8Character::Tick(float DeltaTime)
@@ -120,6 +121,34 @@ void AMyProject8Character::OnComponentEndOverlap(UPrimitiveComponent* Overlapped
 		NewPoint->CanGrap(false);
 		GrapPoints.erase(std::ranges::find(GrapPoints, NewPoint));
 	}
+}
+
+void AMyProject8Character::newJump()
+{
+	UE_LOG(LogTemp, Error, TEXT("Jump"));
+	bPressedJump = true;
+	JumpKeyHoldTime = 0.0f;
+	if (bCanJump)
+	{
+		LaunchCharacter(LaunchVelocity, false, false);
+	}
+	else
+	{
+		if (USlowFallComponent* FallComp = Cast<USlowFallComponent>(SlowFallComponent))
+		{
+			FallComp->SlowFallOn();
+			UE_LOG(LogTemp, Error, TEXT("c'est good"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("SlowFallComponent non initialisé !"));
+		}
+	}
+}
+
+void AMyProject8Character::newStopJumping()
+{
+	
 }
 
 
@@ -187,8 +216,8 @@ void AMyProject8Character::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
 		
 		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AMyProject8Character::newJump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AMyProject8Character::newStopJumping);
 
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMyProject8Character::Move);

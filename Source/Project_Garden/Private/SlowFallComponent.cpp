@@ -36,20 +36,24 @@ void USlowFallComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	if(CharaRef->GetCharacterMovement()->IsMovingOnGround())
+	{
+		CharaRef->GetCharacterMovement()->GravityScale = GravityScaleClassic;
+		CharaRef->GetCharacterMovement()->AirControl = AirControlClassic;
+		Plane = true;
+	}
 }
 
 void USlowFallComponent::SlowFallOn()
 {
 	if (CharaRef && CharaRef->GetCharacterMovement()->IsFalling())
-	{
-		UE_LOG(LogTemp, Error, TEXT("La ca marche"));
 		if(Plane)
 		{
 			Plane = false;
 			CharaRef->GetCharacterMovement()->Velocity.Z = 0;
 			CharaRef->GetCharacterMovement()->GravityScale = GravityScaleGlide;
 			CharaRef->GetCharacterMovement()->AirControl = AirControlGlide;
+			UE_LOG(LogTemp, Error, TEXT("L"));
 		}
 		else
 		{
@@ -57,7 +61,5 @@ void USlowFallComponent::SlowFallOn()
 			CharaRef->GetCharacterMovement()->AirControl = AirControlClassic;
 			Plane = true;
 		}
-	}
-	UE_LOG(LogTemp, Error, TEXT("NOOOOOOOOON"));
 }
 

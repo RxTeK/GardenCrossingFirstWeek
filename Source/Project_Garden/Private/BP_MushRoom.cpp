@@ -55,7 +55,6 @@ void ABP_MushRoom::OnComponentOverlap(UPrimitiveComponent* OverlappedComp, AActo
         FVector color = FVector(randomNumber(), randomNumber(), randomNumber());
         Mesh->SetVectorParameterValueOnMaterials(name, color);
         UE_LOG(LogTemp, Display, TEXT("Random Color"));
-        
     }
     
     AMyProject8Character* Chararef = Cast<AMyProject8Character>(OtherActor);

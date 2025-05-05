@@ -137,7 +137,6 @@ void AMyProject8Character::newJump()
 		if (USlowFallComponent* FallComp = Cast<USlowFallComponent>(SlowFallComponent))
 		{
 			FallComp->SlowFallOn();
-			UE_LOG(LogTemp, Error, TEXT("c'est good"));
 		}
 		else
 		{

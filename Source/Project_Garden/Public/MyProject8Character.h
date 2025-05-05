@@ -130,6 +130,6 @@ private:
 	void newJump();
 
 	UFUNCTION()
-	void newStopJumping() ;
+	void newStopJumping();
 };
 

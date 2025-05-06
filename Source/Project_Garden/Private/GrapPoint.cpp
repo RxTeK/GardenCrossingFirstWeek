@@ -26,7 +26,7 @@ AGrapPoint::AGrapPoint()
 void AGrapPoint::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	Widget->SetVisibility(false);
 }
 
 // Called every frame

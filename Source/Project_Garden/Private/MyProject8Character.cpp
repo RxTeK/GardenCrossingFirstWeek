@@ -119,7 +119,11 @@ void AMyProject8Character::OnComponentEndOverlap(UPrimitiveComponent* Overlapped
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Grap Points None!"));
 		NewPoint->CanGrap(false);
-		GrapPoints.erase(std::ranges::find(GrapPoints, NewPoint));
+		if (std::ranges::find(GrapPoints, NewPoint) != GrapPoints.end())
+		{
+			GrapPoints.erase(std::ranges::find(GrapPoints, NewPoint));
+		}
+		
 	}
 }
 

@@ -5,6 +5,9 @@
 #include "Components/WidgetComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
+#include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 
 // Sets default values
@@ -15,9 +18,12 @@ AGrapPoint::AGrapPoint()
 
 	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
 	Widget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Widget"));
+	Arrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow"));
 
 	SetRootComponent(Box);
 	Widget->SetupAttachment(Box);
+	Arrow->SetupAttachment(Box);
+	
 }
 
 
@@ -33,6 +39,7 @@ void AGrapPoint::BeginPlay()
 void AGrapPoint::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	Arrow->SetWorldRotation(UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation()));
 
 }
 

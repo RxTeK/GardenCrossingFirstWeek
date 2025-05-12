@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/ArrowComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/Actor.h"
@@ -20,10 +21,15 @@ class PROJECT_GARDEN_API AGrapPoint : public AActor
 	UWidgetComponent* Widget;
 
 	
+	
 public:	
 	// Sets default values for this actor's properties
 	AGrapPoint();
 	void CanGrap(bool);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	UArrowComponent* Arrow;
+
 
 protected:
 	// Called when the game starts or when spawned

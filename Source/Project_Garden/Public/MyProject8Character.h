@@ -131,5 +131,8 @@ private:
 
 	UFUNCTION()
 	void newStopJumping();
+
+	UFUNCTION()
+	void HeightGrap();
 };
 

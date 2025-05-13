@@ -16,6 +16,7 @@ class USlowFallComponent;
 class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
+class ASpline;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -71,6 +72,9 @@ public:
 
 	UPROPERTY()
 	bool bIsMontagePlaying = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<ASpline> SplineClass;
 
 protected:
 

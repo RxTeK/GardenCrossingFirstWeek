@@ -39,8 +39,10 @@ void AGrapPoint::BeginPlay()
 void AGrapPoint::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	Arrow->SetWorldRotation(UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation()));
-
+	if (GetWorld()->GetFirstPlayerController()->GetPawn() != nullptr)
+	{
+		Arrow->SetWorldRotation(UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation()));
+	}
 }
 
 void AGrapPoint::CanGrap(bool Grap)

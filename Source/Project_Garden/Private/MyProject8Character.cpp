@@ -20,6 +20,7 @@
 #include "VectorTypes.h"
 #include "Components/SphereComponent.h"
 #include "SlowFallComponent.h"
+#include "Spline.h"
 #include "DataWrappers/ChaosVDQueryDataWrappers.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -281,6 +282,16 @@ void AMyProject8Character::Look(const FInputActionValue& Value)
 
 void AMyProject8Character::Interaction()
 {
+	if (BestGrapPoint != nullptr)
+	{
+		UWorld* World = GetWorld();
+		if (World != nullptr && SplineClass != nullptr)
+		{
+			ASpline* Rope = World->SpawnActor<ASpline>(SplineClass, BestGrapPoint->GetActorLocation(), FRotator(0, 0, 0));
+			Rope->AttachToActor(BestGrapPoint, FAttachmentTransformRules::KeepWorldTransform, FName(TEXT("Bone")));
+			Rope->SetActorLocation(BestGrapPoint->GetActorLocation(), false , nullptr, ETeleportType::TeleportPhysics);
+		}
+	}
 	
 }
 

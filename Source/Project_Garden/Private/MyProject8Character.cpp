@@ -19,6 +19,7 @@
 #include "KismetTraceUtils.h"
 #include "VectorTypes.h"
 #include "Components/SphereComponent.h"
+#include "SlowFallComponent.h"
 #include "DataWrappers/ChaosVDQueryDataWrappers.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -150,11 +151,39 @@ void AMyProject8Character::newStopJumping()
 	
 }
 
+void AMyProject8Character::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	if (Montage == MyAnimMontage)
+	{
+		bIsMontagePlaying = false;
+		
+		if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+		{
+			AnimInstance->OnMontageEnded.RemoveDynamic(this, &AMyProject8Character::OnMontageEnded);
+		}
+	}
+}
+
+void AMyProject8Character::PlayMontage()
+{
+	if (bIsMontagePlaying) return;
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (AnimInstance && MyAnimMontage)
+	{
+		bIsMontagePlaying = true;
+		
+		AnimInstance->Montage_Play(MyAnimMontage);
+
+		AnimInstance->OnMontageEnded.AddDynamic(this, &AMyProject8Character::OnMontageEnded);
+	}
+}
+
 void AMyProject8Character::HandleJumpInput()
 {
 	if (bCanJump)
 	{
-		bCanJump = false;
+		DisableJump();
 		GetWorldTimerManager().ClearTimer(JumpResetTimerHandle);
 
 		// Saut vers le haut
@@ -163,11 +192,7 @@ void AMyProject8Character::HandleJumpInput()
 		// Appel du slow fall
 		if (SlowFallComponent)
 		{
-			UFunction* SlowFallFunc = SlowFallComponent->FindFunction(FName("SlowFallOn"));
-			if (SlowFallFunc)
-			{
-				SlowFallComponent->ProcessEvent(SlowFallFunc, nullptr);
-			}
+			SlowFallComponent->SlowFallOn();
 		}
 	}
 }
@@ -194,7 +219,7 @@ void AMyProject8Character::DisableJump()
 {
 	bCanJump = false;
 }
-
+  
 
 //////////////////////////////////////////////////////////////////////////
 // Input

@@ -47,19 +47,32 @@ void USlowFallComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 void USlowFallComponent::SlowFallOn()
 {
-	if (CharaRef && CharaRef->GetCharacterMovement()->IsFalling())
-		if(Plane)
-		{
-			Plane = false;
-			CharaRef->GetCharacterMovement()->Velocity.Z = 0;
-			CharaRef->GetCharacterMovement()->GravityScale = GravityScaleGlide;
-			CharaRef->GetCharacterMovement()->AirControl = AirControlGlide;
-		}
-		else
-		{
-			GravityClassic();
-		}
+	if (!CharaRef || !CharaRef->GetCharacterMovement()->IsFalling())
+		return;
+
+	// Ne rien faire si l’animation est en cours
+	if (CharaRef->bIsMontagePlaying)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Animation en cours, switch de mode désactivé."));
+		return;
+	}
+
+	if (Plane)
+	{
+		GravityClassic();
+		Plane = false;
+		CharaRef->GetCharacterMovement()->Velocity.Z = 0;
+		CharaRef->GetCharacterMovement()->GravityScale = GravityScaleGlide;
+		CharaRef->GetCharacterMovement()->AirControl = AirControlGlide;
+
+		CharaRef->PlayMontage();
+	}
+	else
+	{
+		GravityClassic();
+	}
 }
+
 
 void USlowFallComponent::GravityClassic()
 {

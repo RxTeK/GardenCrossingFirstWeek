@@ -1,6 +1,7 @@
 #include "BP_MushRoom.h"
 
 #include "MyProject8Character.h"
+#include "SlowFallComponent.h"
 
 // Sets default values
 ABP_MushRoom::ABP_MushRoom()
@@ -60,10 +61,16 @@ void ABP_MushRoom::OnComponentOverlap(UPrimitiveComponent* OverlappedComp, AActo
     AMyProject8Character* Chararef = Cast<AMyProject8Character>(OtherActor);
     if (Chararef)
     {
-        UFunction* SlowFallFuncClassic = Chararef->SlowFallComponent->FindFunction(FName("GravityClassic"));
-        if (SlowFallFuncClassic)
+        
+        // UFunction* SlowFallFuncClassic = Chararef->SlowFallComponent->FindFunction(FName("GravityClassic"));
+        // if (SlowFallFuncClassic)
+        // {
+        //    Chararef->SlowFallComponent->ProcessEvent(SlowFallFuncClassic, nullptr);
+        // }
+
+        if(USlowFallComponent* comp = Chararef->SlowFallComponent)
         {
-           Chararef->SlowFallComponent->ProcessEvent(SlowFallFuncClassic, nullptr);
+            comp->GravityClassic();
         }
         Chararef->LaunchCharacter(Chararef->GetActorUpVector()*1000.0f, true, true);
     }

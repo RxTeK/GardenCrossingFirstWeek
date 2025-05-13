@@ -42,11 +42,14 @@ public:
 
 	UPROPERTY()
 	bool StopPlane;
+
+	UPROPERTY()
+	bool Plane = true;
 	
 private:
 	UPROPERTY()
 	TObjectPtr<AMyProject8Character> CharaRef;
 
 	UPROPERTY()
-	bool Plane = true;
+	bool AlreadyPlane;
 };

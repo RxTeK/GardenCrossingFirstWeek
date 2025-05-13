@@ -128,49 +128,44 @@ void AMyProject8Character::newJump()
 {
 	bPressedJump = true;
 	bCanJump = false;
-	JumpKeyHoldTime = 0.0f;
 	if (bCanJump)
 	{
 		LaunchCharacter(LaunchVelocity, false, false);
-	}
-	else
-	{
-		
 	}
 }
 
 void AMyProject8Character::newStopJumping()
 {
-	SlowFallComponent->StopPlane = true;
+	SlowFallComponent->GravityClassic();
+	UE_LOG(LogTemplateCharacter, Error, TEXT("coucou"))
 }
 
 void AMyProject8Character::Plane()
 {
+	// Ne pas faire de trace si le joueur monte encore
+	if (GetCharacterMovement()->Velocity.Z > 0)
+	{
+		return;
+	}
+
 	FVector Start = GetActorLocation();
-	FVector End = Start - FVector(0.0f, 0.0f, 100.0f);
+	FVector End = Start - FVector(0.0f, 0.0f, 200.0f);
 	FHitResult HitResult;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
-	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult,Start,End,ECC_Visibility,Params);
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params);
 	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 2.0f, 0, 2.0f);
-	if (bHit)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Touché: %s à la position %s"), 
-			*HitResult.GetActor()->GetName(),
-			*HitResult.ImpactPoint.ToString());
-	}
-	else
+
+	if (!bHit)
 	{
 		if (USlowFallComponent* FallComp = Cast<USlowFallComponent>(SlowFallComponent))
 		{
 			FallComp->SlowFallOn();
 		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("SlowFallComponent non initialisé !"));
-		}
 	}
 }
+
 
 void AMyProject8Character::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
@@ -204,18 +199,11 @@ void AMyProject8Character::OnMovementModeChanged(EMovementMode PrevMovementMode,
 {
 	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
 
-	if (GetCharacterMovement()->MovementMode == MOVE_Falling)
+	if (GetCharacterMovement()->MovementMode != MOVE_Falling)
 	{
-		bCanJump = true;
-
-		GetWorldTimerManager().SetTimer(
-			JumpResetTimerHandle,
-			this,
-			&AMyProject8Character::newStopJumping,
-			CanJumpDuration,
-			false
-		);
+		
 	}
+	
 }
 
 //////////////////////////////////////////////////////////////////////////

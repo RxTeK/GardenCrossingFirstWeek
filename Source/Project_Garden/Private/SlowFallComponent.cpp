@@ -42,34 +42,38 @@ void USlowFallComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		CharaRef->GetCharacterMovement()->GravityScale = GravityScaleClassic;
 		CharaRef->GetCharacterMovement()->AirControl = AirControlClassic;
 		Plane = true;
+		StopPlane = false;
 	}
 }
 
 void USlowFallComponent::SlowFallOn()
 {
-	if (!CharaRef || !CharaRef->GetCharacterMovement()->IsFalling())
-		return;
-
-	// Ne rien faire si l’animation est en cours
-	if (CharaRef->bIsMontagePlaying)
+	if (!AlreadyPlane)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Animation en cours, switch de mode désactivé."));
-		return;
-	}
+		AlreadyPlane = true;
+		if (!CharaRef || !CharaRef->GetCharacterMovement()->IsFalling())
+			return;
 
-	if (Plane && !StopPlane)
-	{
-		GravityClassic();
-		Plane = false;
-		CharaRef->GetCharacterMovement()->Velocity.Z = 0;
-		CharaRef->GetCharacterMovement()->GravityScale = GravityScaleGlide;
-		CharaRef->GetCharacterMovement()->AirControl = AirControlGlide;
+		// Ne rien faire si l’animation est en cours
+		if (CharaRef->bIsMontagePlaying)
+		{
+			return;
+		}
 
-		CharaRef->PlayMontage();
-	}
-	else
-	{
-		GravityClassic();
+		if (Plane && !StopPlane)
+		{
+			Plane = false;
+			CharaRef->GetCharacterMovement()->Velocity.Z = 0;
+			CharaRef->GetCharacterMovement()->GravityScale = GravityScaleGlide;
+			CharaRef->GetCharacterMovement()->AirControl = AirControlGlide;
+
+			CharaRef->PlayMontage();
+		}
+		else
+		{
+			GravityClassic();
+			UE_LOG(LogTemp, Warning, TEXT("PASSSSE"));
+		}
 	}
 }
 
@@ -79,5 +83,6 @@ void USlowFallComponent::GravityClassic()
 	CharaRef->GetCharacterMovement()->GravityScale = GravityScaleClassic;
 	CharaRef->GetCharacterMovement()->AirControl = AirControlClassic;
 	Plane = true;
+	AlreadyPlane = false;
 }
 

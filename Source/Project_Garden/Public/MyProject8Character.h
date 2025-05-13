@@ -8,11 +8,11 @@
 #include "GrapPoint.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
+#include "SlowFallComponent.h"
 #include "Logging/LogMacros.h"
 #include "MyProject8Character.generated.h"
 
 class USpringArmComponent;
-class USlowFallComponent;
 class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
@@ -53,6 +53,13 @@ class AMyProject8Character : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* InteractionAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* AimAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* FireAction;
+	
+
 	
 
 public:
@@ -61,16 +68,7 @@ public:
 	bool OnSpline = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Saut")
-	USlowFallComponent* SlowFallComponent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-	UAnimMontage* MyAnimMontage;
-
-	UFUNCTION()
-	void PlayMontage();
-
-	UPROPERTY()
-	bool bIsMontagePlaying = false;
+	UActorComponent* SlowFallComponent;
 
 protected:
 
@@ -142,9 +140,6 @@ private:
 
 	UFUNCTION()
 	void newStopJumping();
-
-	UFUNCTION()
-	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
-
+	
 };
 

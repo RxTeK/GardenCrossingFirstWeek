@@ -60,7 +60,11 @@ void ABP_MushRoom::OnComponentOverlap(UPrimitiveComponent* OverlappedComp, AActo
     AMyProject8Character* Chararef = Cast<AMyProject8Character>(OtherActor);
     if (Chararef)
     {
-        Chararef->SlowFallComponent.
+        UFunction* SlowFallFuncClassic = Chararef->SlowFallComponent->FindFunction(FName("GravityClassic"));
+        if (SlowFallFuncClassic)
+        {
+           Chararef->SlowFallComponent->ProcessEvent(SlowFallFuncClassic, nullptr);
+        }
         Chararef->LaunchCharacter(Chararef->GetActorUpVector()*1000.0f, true, true);
     }
 }

@@ -54,7 +54,6 @@ void USlowFallComponent::SlowFallOn()
 			CharaRef->GetCharacterMovement()->Velocity.Z = 0;
 			CharaRef->GetCharacterMovement()->GravityScale = GravityScaleGlide;
 			CharaRef->GetCharacterMovement()->AirControl = AirControlGlide;
-			UE_LOG(LogTemp, Error, TEXT("L"));
 		}
 		else
 		{

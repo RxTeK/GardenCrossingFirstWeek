@@ -150,12 +150,6 @@ void AMyProject8Character::newStopJumping()
 	
 }
 
-void AMyProject8Character::HeightGrap()
-{
-	
-}
-
-
 void AMyProject8Character::HandleJumpInput()
 {
 	if (bCanJump)

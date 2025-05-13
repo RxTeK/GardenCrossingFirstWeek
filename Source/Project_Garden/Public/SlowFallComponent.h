@@ -36,6 +36,9 @@ public:
 	float GravityScaleGlide;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "SlowFall")
 	float AirControlGlide;
+
+	UFUNCTION()
+	void GravityClassic();
 	
 private:
 	UPROPERTY()
@@ -43,7 +46,4 @@ private:
 
 	UPROPERTY()
 	bool Plane = true;
-	
-	UFUNCTION()
-	void GravityClassic();
 };

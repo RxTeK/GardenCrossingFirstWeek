@@ -78,6 +78,10 @@ protected:
 	UFUNCTION()
 	float height(AGrapPoint* Point);
 
+	UPROPERTY()
+	AGrapPoint* BestGrapPoint;
+
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	USphereComponent* Sphere;
 

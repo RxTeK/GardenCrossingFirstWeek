@@ -17,6 +17,7 @@
 #include "GrapPoint.h"
 #include "InputActionValue.h"
 #include "KismetTraceUtils.h"
+#include "VectorTypes.h"
 #include "Components/SphereComponent.h"
 #include "DataWrappers/ChaosVDQueryDataWrappers.h"
 
@@ -82,24 +83,20 @@ void AMyProject8Character::Tick(float DeltaTime)
 	
 	if (GrapPoints.size() > 0)
 	{
-		AGrapPoint* BestGrapPoint = GrapPoints[0];
+		BestGrapPoint = GrapPoints[0];
 		for (AGrapPoint* GrapPoint : GrapPoints)
 		{
+			GrapPoint->CanGrap(false);
 			if (height(BestGrapPoint) > height(GrapPoint))
 			{
 				BestGrapPoint = GrapPoint;
-				
 			}
 		}
+		BestGrapPoint->CanGrap(true);
 	}
-	
-	else if (GrapPoints.size() > 0)
+	else if (BestGrapPoint != nullptr)
 	{
-		for (AGrapPoint*  Points : GrapPoints)
-		{
-			Points->CanGrap(false);
-		}
-		GrapPoints.clear();
+		BestGrapPoint = nullptr;
 	}
 }
 
@@ -108,7 +105,6 @@ void AMyProject8Character::OnComponentOverlap(UPrimitiveComponent* OverlappedCom
 	if (AGrapPoint* NewPoint = Cast<AGrapPoint>(OtherActor))
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Grap Points!"));
-		NewPoint->CanGrap(true);
 		GrapPoints.push_back(NewPoint);
 	}
 }
@@ -153,6 +149,12 @@ void AMyProject8Character::newStopJumping()
 {
 	
 }
+
+void AMyProject8Character::HeightGrap()
+{
+	
+}
+
 
 void AMyProject8Character::HandleJumpInput()
 {
@@ -228,7 +230,7 @@ void AMyProject8Character::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMyProject8Character::Look);
 
 		//Interact
-		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Triggered, this, &AMyProject8Character::Interaction);
+		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &AMyProject8Character::Interaction);
 	}
 	else
 	{
@@ -279,6 +281,9 @@ void AMyProject8Character::Interaction()
 
 float AMyProject8Character::height(AGrapPoint* Point)
 {
-	
-	return 0.0f;
+	float Height = 0.0f;
+	//Height = Point->GetDistanceTo(this);
+	Height += UE::Geometry::Dot(Point->Arrow->GetForwardVector(), this->GetFollowCamera()->GetForwardVector());
+	GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::Yellow,FString::Printf(TEXT("Height = %f"), Height));
+	return Height;
 }

@@ -1,0 +1,16 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "1.0",
+  "FriendlyName": "Measurement Tool Plugin",
+  "Description": "A plugin that adds a measurement tool button to the editor.",
+  "Category": "Editor",
+  "CreatedBy": "ChatGPT",
+  "Modules": [
+    {
+      "Name": "MeasurementToolPlugin",
+      "Type": "Editor",
+      "LoadingPhase": "Default"
+    }
+  ]
+}

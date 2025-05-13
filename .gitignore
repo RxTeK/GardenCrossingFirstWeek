@@ -3,6 +3,8 @@ Visual Studio 2015 user specific files
 .idea
 .vsconfig
 Binaries/*
+Plugins/*/Binaries/
+Plugins/*/Intermediate/
 
 Compiled Object files
 *.slo

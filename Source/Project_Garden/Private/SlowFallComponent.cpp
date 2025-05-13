@@ -57,7 +57,7 @@ void USlowFallComponent::SlowFallOn()
 		return;
 	}
 
-	if (Plane)
+	if (Plane && !StopPlane)
 	{
 		GravityClassic();
 		Plane = false;

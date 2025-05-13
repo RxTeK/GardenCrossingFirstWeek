@@ -39,6 +39,9 @@ public:
 
 	UFUNCTION()
 	void GravityClassic();
+
+	UPROPERTY()
+	bool StopPlane;
 	
 private:
 	UPROPERTY()

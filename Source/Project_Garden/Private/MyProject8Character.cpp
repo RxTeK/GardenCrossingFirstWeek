@@ -126,12 +126,38 @@ void AMyProject8Character::OnComponentEndOverlap(UPrimitiveComponent* Overlapped
 
 void AMyProject8Character::newJump()
 {
-	UE_LOG(LogTemp, Error, TEXT("Jump"));
 	bPressedJump = true;
+	bCanJump = false;
 	JumpKeyHoldTime = 0.0f;
 	if (bCanJump)
 	{
 		LaunchCharacter(LaunchVelocity, false, false);
+	}
+	else
+	{
+		
+	}
+}
+
+void AMyProject8Character::newStopJumping()
+{
+	SlowFallComponent->StopPlane = true;
+}
+
+void AMyProject8Character::Plane()
+{
+	FVector Start = GetActorLocation();
+	FVector End = Start - FVector(0.0f, 0.0f, 100.0f);
+	FHitResult HitResult;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult,Start,End,ECC_Visibility,Params);
+	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 2.0f, 0, 2.0f);
+	if (bHit)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Touché: %s à la position %s"), 
+			*HitResult.GetActor()->GetName(),
+			*HitResult.ImpactPoint.ToString());
 	}
 	else
 	{
@@ -144,11 +170,6 @@ void AMyProject8Character::newJump()
 			UE_LOG(LogTemp, Error, TEXT("SlowFallComponent non initialisé !"));
 		}
 	}
-}
-
-void AMyProject8Character::newStopJumping()
-{
-	
 }
 
 void AMyProject8Character::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
@@ -179,24 +200,6 @@ void AMyProject8Character::PlayMontage()
 	}
 }
 
-void AMyProject8Character::HandleJumpInput()
-{
-	if (bCanJump)
-	{
-		DisableJump();
-		GetWorldTimerManager().ClearTimer(JumpResetTimerHandle);
-
-		// Saut vers le haut
-		LaunchCharacter(FVector(0.f, 0.f, JumpImpulse), false, false);
-
-		// Appel du slow fall
-		if (SlowFallComponent)
-		{
-			SlowFallComponent->SlowFallOn();
-		}
-	}
-}
-
 void AMyProject8Character::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)
 {
 	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
@@ -208,18 +211,12 @@ void AMyProject8Character::OnMovementModeChanged(EMovementMode PrevMovementMode,
 		GetWorldTimerManager().SetTimer(
 			JumpResetTimerHandle,
 			this,
-			&AMyProject8Character::DisableJump,
+			&AMyProject8Character::newStopJumping,
 			CanJumpDuration,
 			false
 		);
 	}
 }
-
-void AMyProject8Character::DisableJump()
-{
-	bCanJump = false;
-}
-  
 
 //////////////////////////////////////////////////////////////////////////
 // Input
@@ -241,7 +238,8 @@ void AMyProject8Character::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AMyProject8Character::newJump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &AMyProject8Character::newStopJumping);
-
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Ongoing, this, &AMyProject8Character::Plane);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Canceled, this, &AMyProject8Character::newStopJumping);
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMyProject8Character::Move);
 

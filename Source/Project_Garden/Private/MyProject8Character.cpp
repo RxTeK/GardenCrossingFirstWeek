@@ -129,6 +129,16 @@ void AMyProject8Character::newJump()
 {
 	bPressedJump = true;
 	bCanJump = false;
+
+	FVector Start = GetActorLocation();
+	FVector End = Start - FVector(0.0f, 0.0f, 200.0f);
+	FHitResult HitResult;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params);
+	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 2.0f, 0, 2.0f);
+
 	if (bCanJump)
 	{
 		LaunchCharacter(LaunchVelocity, false, false);
@@ -143,21 +153,7 @@ void AMyProject8Character::newStopJumping()
 
 void AMyProject8Character::Plane()
 {
-	// Ne pas faire de trace si le joueur monte encore
-	if (GetCharacterMovement()->Velocity.Z > 0)
-	{
-		return;
-	}
-
-	FVector Start = GetActorLocation();
-	FVector End = Start - FVector(0.0f, 0.0f, 200.0f);
-	FHitResult HitResult;
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);
-
-	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params);
-	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 2.0f, 0, 2.0f);
-
+	
 	if (!bHit)
 	{
 		if (USlowFallComponent* FallComp = Cast<USlowFallComponent>(SlowFallComponent))

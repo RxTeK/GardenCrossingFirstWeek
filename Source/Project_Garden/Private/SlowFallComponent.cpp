@@ -58,9 +58,14 @@ void USlowFallComponent::SlowFallOn()
 		}
 		else
 		{
-			CharaRef->GetCharacterMovement()->GravityScale = GravityScaleClassic;
-			CharaRef->GetCharacterMovement()->AirControl = AirControlClassic;
-			Plane = true;
+			GravityClassic();
 		}
+}
+
+void USlowFallComponent::GravityClassic()
+{
+	CharaRef->GetCharacterMovement()->GravityScale = GravityScaleClassic;
+	CharaRef->GetCharacterMovement()->AirControl = AirControlClassic;
+	Plane = true;
 }
 

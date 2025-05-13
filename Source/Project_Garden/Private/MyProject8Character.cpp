@@ -17,7 +17,6 @@
 #include "GrapPoint.h"
 #include "InputActionValue.h"
 #include "KismetTraceUtils.h"
-#include "VectorTypes.h"
 #include "Components/SphereComponent.h"
 #include "DataWrappers/ChaosVDQueryDataWrappers.h"
 
@@ -86,13 +85,21 @@ void AMyProject8Character::Tick(float DeltaTime)
 		AGrapPoint* BestGrapPoint = GrapPoints[0];
 		for (AGrapPoint* GrapPoint : GrapPoints)
 		{
-			GrapPoint->CanGrap(false);
 			if (height(BestGrapPoint) > height(GrapPoint))
 			{
 				BestGrapPoint = GrapPoint;
+				
 			}
 		}
-		BestGrapPoint->CanGrap(true);
+	}
+	
+	else if (GrapPoints.size() > 0)
+	{
+		for (AGrapPoint*  Points : GrapPoints)
+		{
+			Points->CanGrap(false);
+		}
+		GrapPoints.clear();
 	}
 }
 
@@ -101,6 +108,7 @@ void AMyProject8Character::OnComponentOverlap(UPrimitiveComponent* OverlappedCom
 	if (AGrapPoint* NewPoint = Cast<AGrapPoint>(OtherActor))
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Grap Points!"));
+		NewPoint->CanGrap(true);
 		GrapPoints.push_back(NewPoint);
 	}
 }
@@ -145,21 +153,6 @@ void AMyProject8Character::newStopJumping()
 {
 	
 }
-
-void AMyProject8Character::HeightGrap()
-{
-	AGrapPoint* BestGrapPoint = GrapPoints[0];
-	for (AGrapPoint* GrapPoint : GrapPoints)
-	{
-		if (height(BestGrapPoint) < height(GrapPoint))
-		{
-			BestGrapPoint = GrapPoint;
-		}
-	}
-	GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, BestGrapPoint->GetName());
-	BestGrapPoint->CanGrap(true);
-}
-
 
 void AMyProject8Character::HandleJumpInput()
 {
@@ -286,9 +279,6 @@ void AMyProject8Character::Interaction()
 
 float AMyProject8Character::height(AGrapPoint* Point)
 {
-	float Height = 0.0f;
-	//Height = Point->GetDistanceTo(this);
-	Height += UE::Geometry::Dot(Point->Arrow->GetForwardVector(), this->GetFollowCamera()->GetForwardVector());
-	GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::Yellow,FString::Printf(TEXT("Height = %f"), Height));
-	return Height;
+	
+	return 0.0f;
 }

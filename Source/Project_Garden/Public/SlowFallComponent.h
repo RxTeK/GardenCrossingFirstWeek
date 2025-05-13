@@ -44,5 +44,6 @@ private:
 	UPROPERTY()
 	bool Plane = true;
 	
-		
+	UFUNCTION()
+	void GravityClassic();
 };

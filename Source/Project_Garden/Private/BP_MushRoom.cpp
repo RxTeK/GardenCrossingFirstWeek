@@ -60,6 +60,7 @@ void ABP_MushRoom::OnComponentOverlap(UPrimitiveComponent* OverlappedComp, AActo
     AMyProject8Character* Chararef = Cast<AMyProject8Character>(OtherActor);
     if (Chararef)
     {
+        Chararef->SlowFallComponent.
         Chararef->LaunchCharacter(Chararef->GetActorUpVector()*1000.0f, true, true);
     }
 }

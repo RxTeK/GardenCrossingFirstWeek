@@ -148,7 +148,7 @@ void AMyProject8Character::newJump()
 void AMyProject8Character::newStopJumping()
 {
 	SlowFallComponent->GravityClassic();
-	UE_LOG(LogTemplateCharacter, Error, TEXT("coucou"))
+	
 }
 
 void AMyProject8Character::Plane()

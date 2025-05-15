@@ -24,9 +24,14 @@ void UcppCameraComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	CharaRef = Cast<AMyProject8Character>(GetOwner());
+
+	if (!CharaRef)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BP_CameraComponent: CharaRef est NULL !"));
+	}
 }
+
 
 
 // Called every frame
@@ -34,13 +39,23 @@ void UcppCameraComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (!CharaRef || !CharaRef->GetCameraBoom()) // Vérifie si CharaRef est valide
+	{
+		return;
+	}
+
+	FVector TargetLocation = CharaRef->GetActorLocation();
+	FVector CurrentLocation = CharaRef->GetCameraBoom()->GetComponentLocation();
+    
+	CharaRef->GetCameraBoom()->SetWorldLocation(FMath::VInterpTo(CurrentLocation, TargetLocation, DeltaTime, InterpSpeedlag));
+
 	if(!CharaRef->OnSpline)
 	{
-		FVector CurrentLocation = CharaRef->GetCameraBoom()->GetComponentLocation();
-		FVector TargetLocation = CharaRef->GetActorLocation();
+		FVector OnSplineCurrentLocation = CharaRef->GetCameraBoom()->GetComponentLocation();
+		FVector OnSplineTargetLocation = CharaRef->GetActorLocation();
 		float InterpSpeed = 7.0f;
 
-		FVector InterpCameraBoom = FMath::VInterpTo(CurrentLocation, TargetLocation, DeltaTime, InterpSpeed);
+		FVector InterpCameraBoom = FMath::VInterpTo(OnSplineCurrentLocation, OnSplineTargetLocation, DeltaTime, InterpSpeed);
 		
 		CharaRef->GetCameraBoom()->SetWorldLocation(InterpCameraBoom);
 	}

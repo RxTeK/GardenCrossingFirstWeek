@@ -83,7 +83,7 @@ void AMyProject8Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	if (GrapPoints.size() > 0)
+	if (GrapPoints.size() > 0 and !bAttached)
 	{
 		BestGrapPoint = GrapPoints[0];
 		for (AGrapPoint* GrapPoint : GrapPoints)
@@ -257,9 +257,21 @@ void AMyProject8Character::Move(const FInputActionValue& Value)
 		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement 
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);
+		// add movement
+		if (bAttached)
+		{
+			if (Rope != nullptr)
+			{
+				MovementVector *= -35550.0f;
+				Rope->SkeletalMesh->AddForce(FVector(MovementVector.X,MovementVector.Y,0.0f),FName(TEXT("Bone_018")));
+			}
+		}
+		else
+		{
+			AddMovementInput(ForwardDirection, MovementVector.Y);
+			AddMovementInput(RightDirection, MovementVector.X);
+		}
+		
 	}
 }
 
@@ -283,9 +295,14 @@ void AMyProject8Character::Interaction()
 		UWorld* World = GetWorld();
 		if (World != nullptr && SplineClass != nullptr)
 		{
-			ASpline* Rope = World->SpawnActor<ASpline>(SplineClass, BestGrapPoint->GetActorLocation(), FRotator(0, 0, 0));
-			Rope->AttachToActor(BestGrapPoint, FAttachmentTransformRules::KeepWorldTransform, FName(TEXT("Bone")));
-			Rope->SetActorLocation(BestGrapPoint->GetActorLocation(), false , nullptr, ETeleportType::TeleportPhysics);
+			bAttached = true;
+			Rope = World->SpawnActor<ASpline>(SplineClass, BestGrapPoint->GetActorLocation(), FRotator(0, 0, 0));
+			Rope->AttachToActor(BestGrapPoint, FAttachmentTransformRules::SnapToTargetIncludingScale, FName(TEXT("Bone")));
+			//Rope->SetActorLocation(BestGrapPoint->GetActorLocation(), false , nullptr, ETeleportType::TeleportPhysics);
+			this->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+			this->GetCharacterMovement()->StopMovementImmediately();
+			this->AttachToActor(Rope, FAttachmentTransformRules::SnapToTargetIncludingScale, FName(TEXT("Bone_021")));
+			this->AddActorLocalRotation(FRotator(90.0f,0.0f,90.0f));
 		}
 	}
 	

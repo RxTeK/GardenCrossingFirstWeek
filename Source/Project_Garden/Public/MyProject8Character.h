@@ -93,6 +93,9 @@ protected:
 	UPROPERTY()
 	AGrapPoint* BestGrapPoint;
 
+	UPROPERTY()
+	ASpline* Rope;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	USphereComponent* Sphere;
@@ -114,6 +117,9 @@ private:
 
 	UPROPERTY()
 	bool bCanJump;
+
+	UPROPERTY()
+	bool bAttached = false;
 	
 	UFUNCTION()
 	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;

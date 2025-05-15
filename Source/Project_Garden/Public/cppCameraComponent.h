@@ -3,13 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InterfaceCamera.h"
 #include "Components/ActorComponent.h"
 #include "cppCameraComponent.generated.h"
 
 class AMyProject8Character;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PROJECT_GARDEN_API UcppCameraComponent : public UActorComponent
+class PROJECT_GARDEN_API UcppCameraComponent : public UActorComponent, public IInterfaceCamera
 {
 	GENERATED_BODY()
 
@@ -19,6 +20,13 @@ public:
 
 	UPROPERTY(EditAnywhere, Blueprintable)
 	float InterpSpeedlag;
+
+	UFUNCTION()
+	virtual void AddSpline(bool Player, USceneComponent* Target, USplineComponent* Spline) override;
+
+	UFUNCTION()
+	virtual void RemoveSpline();
+	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -34,6 +42,24 @@ private:
 	UFUNCTION()
 	void ResetPostition();
 
+	UFUNCTION()
+	void RotationToTarget();
+
 	UPROPERTY()
 	FVector Postition000 = FVector(0, 0, 0);
+
+	UPROPERTY()
+	FTimerHandle EndTimerHandle;
+
+	UPROPERTY()
+	FTimerHandle StartSplineTimerHandle;
+
+	UPROPERTY()
+	USplineComponent* SplineComponent;
+
+	UPROPERTY()
+	USceneComponent* PostRoot;
+
+	UPROPERTY()
+	bool PlayerGood;
 };

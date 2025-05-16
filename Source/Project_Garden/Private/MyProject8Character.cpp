@@ -262,8 +262,8 @@ void AMyProject8Character::Move(const FInputActionValue& Value)
 		{
 			if (Rope != nullptr)
 			{
-				MovementVector *= -35550.0f;
-				Rope->SkeletalMesh->AddForce(FVector(MovementVector.X,MovementVector.Y,0.0f),FName(TEXT("Bone_018")));
+				MovementVector *= -25550.0f;
+				Rope->SkeletalMesh->AddForce(FVector(0.0f,MovementVector.Y,0.0f),FName(TEXT("Bone_039")));
 			}
 		}
 		else
@@ -301,7 +301,7 @@ void AMyProject8Character::Interaction()
 			//Rope->SetActorLocation(BestGrapPoint->GetActorLocation(), false , nullptr, ETeleportType::TeleportPhysics);
 			this->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 			this->GetCharacterMovement()->StopMovementImmediately();
-			this->AttachToActor(Rope, FAttachmentTransformRules::SnapToTargetIncludingScale, FName(TEXT("Bone_021")));
+			this->AttachToActor(Rope, FAttachmentTransformRules::SnapToTargetIncludingScale, FName(TEXT("Bone_008")));
 			this->AddActorLocalRotation(FRotator(90.0f,0.0f,90.0f));
 		}
 	}

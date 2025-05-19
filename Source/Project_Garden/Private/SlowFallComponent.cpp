@@ -55,7 +55,7 @@ void USlowFallComponent::SlowFallOn()
 			return;
 
 		// Ne rien faire si l’animation est en cours
-		if (CharaRef->bIsMontagePlaying)
+		if (CharaRef->bIsStartingGlide)
 		{
 			return;
 		}
@@ -66,8 +66,6 @@ void USlowFallComponent::SlowFallOn()
 			CharaRef->GetCharacterMovement()->Velocity.Z = 0;
 			CharaRef->GetCharacterMovement()->GravityScale = GravityScaleGlide;
 			CharaRef->GetCharacterMovement()->AirControl = AirControlGlide;
-
-			CharaRef->PlayMontage();
 		}
 		else
 		{

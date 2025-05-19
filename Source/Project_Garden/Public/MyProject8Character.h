@@ -64,14 +64,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Saut")
 	USlowFallComponent* SlowFallComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Animation")
-	UAnimMontage* MyAnimMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Glide")
+	bool bIsGliding;
 
-	UFUNCTION()
-	void PlayMontage();
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Glide")
+	bool bIsStartingGlide;
 
-	UPROPERTY()
-	bool bIsMontagePlaying = false;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Glide")
+	bool bIsEndingGlide;
+
+ UFUNCTION()
+	void ResetGlide();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<ASpline> SplineClass;
@@ -147,10 +150,7 @@ private:
 
 	UFUNCTION()
 	void newStopJumping();
-
-	UFUNCTION()
-	void OnMontageEnded(UAnimMontage* Montage, bool bInterrupted);
-
+	
 	UFUNCTION()
 	void Plane();
 

@@ -147,49 +147,44 @@ void AMyProject8Character::newJump()
 
 void AMyProject8Character::newStopJumping()
 {
-	SlowFallComponent->GravityClassic();
-	
+	if (!bIsGliding)
+	{
+		return;
+	}
+
+	if (SlowFallComponent)
+	{
+		SlowFallComponent->GravityClassic();
+	}
+
+	bIsStartingGlide = false;
+	bIsEndingGlide = true;
 }
 
 void AMyProject8Character::Plane()
 {
-	
-	if (!bHit)
+	if (GetCharacterMovement()->IsFalling())
 	{
-		if (USlowFallComponent* FallComp = Cast<USlowFallComponent>(SlowFallComponent))
+		if(!bHit)
 		{
-			FallComp->SlowFallOn();
+			if (USlowFallComponent* FallComp = Cast<USlowFallComponent>(SlowFallComponent))
+			{
+				FallComp->SlowFallOn();
+				bIsStartingGlide = true;
+				bIsGliding = true;
+				bIsEndingGlide = false;
+			}
 		}
 	}
 }
 
 
-void AMyProject8Character::OnMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+void AMyProject8Character::ResetGlide()
 {
-	if (Montage == MyAnimMontage)
-	{
-		bIsMontagePlaying = false;
-		
-		if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
-		{
-			AnimInstance->OnMontageEnded.RemoveDynamic(this, &AMyProject8Character::OnMontageEnded);
-		}
-	}
-}
-
-void AMyProject8Character::PlayMontage()
-{
-	if (bIsMontagePlaying) return;
-
-	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (AnimInstance && MyAnimMontage)
-	{
-		bIsMontagePlaying = true;
-		
-		AnimInstance->Montage_Play(MyAnimMontage);
-
-		AnimInstance->OnMontageEnded.AddDynamic(this, &AMyProject8Character::OnMontageEnded);
-	}
+	UE_LOG(LogTemp, Warning, TEXT("Reset"));
+	bIsGliding = false;
+	bIsStartingGlide = false;
+	bIsEndingGlide = false;
 }
 
 void AMyProject8Character::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)

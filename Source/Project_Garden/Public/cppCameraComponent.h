@@ -25,7 +25,7 @@ public:
 	virtual void AddSpline(bool Player, USceneComponent* Target, USplineComponent* Spline) override;
 
 	UFUNCTION()
-	virtual void RemoveSpline();
+	virtual void RemoveSpline() override;
 	
 protected:
 	// Called when the game starts

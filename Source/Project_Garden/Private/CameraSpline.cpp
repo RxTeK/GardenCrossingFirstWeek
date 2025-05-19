@@ -40,7 +40,7 @@ ACameraSpline::ACameraSpline()
 	if(Enter)
 	{
 		Enter->OnComponentBeginOverlap.AddDynamic(this, &ACameraSpline::OnOverlap);
-		Enter->OnComponentBeginOverlap.AddDynamic(this, &ACameraSpline::EndOverlap);
+		Enter->OnComponentEndOverlap.AddDynamic(this, &ACameraSpline::EndOverlap);
 	}
 }
 
@@ -73,18 +73,17 @@ void ACameraSpline::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
 	}
 }
 
-void ACameraSpline::EndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
-	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ACameraSpline::EndOverlap( UPrimitiveComponent* OverlappedComponent,AActor* OtherActor,UPrimitiveComponent* OtherComp,int32 OtherBodyIndex)
 {
 	AMyProject8Character* Player = Cast<AMyProject8Character>(OtherActor);
 	if (Player)
 	{
-		FVector Vec1 = CharaRef->GetCapsuleComponent()->GetForwardVector();
+		FVector Vec1 = Player->GetCapsuleComponent()->GetForwardVector();
 		FVector Vec2 = Arrow->GetForwardVector();
 
 		if (!Vec1.Equals(Vec2, 0.5f))
 		{
-			TArray<UActorComponent*> Components = OtherActor->GetComponents().Array();
+			TArray<UActorComponent*> Components = Player->GetComponents().Array();
 			for (UActorComponent* Component : Components)
 			{
 				if (Component->GetClass()->ImplementsInterface(UInterfaceCamera::StaticClass()))
@@ -92,7 +91,7 @@ void ACameraSpline::EndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 					IInterfaceCamera* InterfaceCam = Cast<IInterfaceCamera>(Component);
 					if (InterfaceCam)
 					{
-						UE_LOG(LogTemp, Warning, TEXT("OVERLAP via component"));
+						UE_LOG(LogTemp, Warning, TEXT("OVERLAP END"));
 						InterfaceCam->RemoveSpline();
 						break;
 					}

@@ -35,9 +35,7 @@ protected:
 						bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
-	void EndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-						UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-						bool bFromSweep, const FHitResult& SweepResult);
+	void EndOverlap( UPrimitiveComponent* OverlappedComponent,AActor* OtherActor,UPrimitiveComponent* OtherComp,int32 OtherBodyIndex);
 
 	UPROPERTY(VisibleAnywhere)
 	USplineComponent* Spline;

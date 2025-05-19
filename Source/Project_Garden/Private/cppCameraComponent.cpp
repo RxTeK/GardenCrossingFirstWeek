@@ -63,7 +63,7 @@ void UcppCameraComponent::ResetPosition()
 
 	FVector InterpFollowCamera = FMath::VInterpTo(CurrentLocation, TargetLocation, GetWorld()->GetDeltaSeconds(), InterpSpeed);
 	
-	CharaRef->GetFollowCamera()->SetWorldLocation(InterpFollowCamera);
+	CharaRef->GetFollowCamera()->SetRelativeLocation(InterpFollowCamera);
 
 	FRotator CurrentRotator = CharaRef->GetFollowCamera()->GetRelativeRotation();
 	FRotator TargetRotator = CharaRef->GetCameraBoom()->GetRelativeRotation();
@@ -71,7 +71,7 @@ void UcppCameraComponent::ResetPosition()
 
 	FRotator InterprotationCamera = FMath::RInterpTo(CurrentRotator, TargetRotator, GetWorld()->GetDeltaSeconds(), InterpSpeedrotation);	
 
-	CharaRef->GetFollowCamera()->SetWorldRotation(InterprotationCamera);
+	CharaRef->GetFollowCamera()->SetRelativeRotation(InterprotationCamera);
 }
 
 void UcppCameraComponent::RotationToTarget()
@@ -109,7 +109,6 @@ void UcppCameraComponent::AddSpline(bool PLayer, USceneComponent* Target, USplin
 
 	GetWorld()->GetTimerManager().ClearTimer(EndTimerHandle);
 	float Interval = GetWorld()->GetDeltaSeconds();
-
 	GetWorld()->GetTimerManager().SetTimer(StartSplineTimerHandle, this, &UcppCameraComponent::RotationToTarget, Interval, true);
 }
 
@@ -118,8 +117,6 @@ void UcppCameraComponent::RemoveSpline()
 	CharaRef->OnSpline = false;
 	GetWorld()->GetTimerManager().ClearTimer(StartSplineTimerHandle);
 	float Interval = GetWorld()->GetDeltaSeconds();
-
-	GetWorld()->GetTimerManager().SetTimer(EndTimerHandle, this, &UcppCameraComponent::RotationToTarget, Interval, true);
-	
+	GetWorld()->GetTimerManager().SetTimer(EndTimerHandle, this, &UcppCameraComponent::ResetPosition, Interval, true);
 }
 

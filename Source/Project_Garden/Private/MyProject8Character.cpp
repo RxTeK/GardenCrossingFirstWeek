@@ -290,10 +290,21 @@ void AMyProject8Character::Look(const FInputActionValue& Value)
 
 void AMyProject8Character::Interaction()
 {
-	if (BestGrapPoint != nullptr)
+
+	if (bAttached)
+	{
+		bAttached = false;
+		this->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+		this->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+		this->LaunchCharacter(Rope->SkeletalMesh->GetBoneLinearVelocity(FName(TEXT("Bone_008"))),false,false);
+		Rope->K2_DestroyActor();
+	}
+	
+	else if (BestGrapPoint != nullptr)
 	{
 		UWorld* World = GetWorld();
-		if (World != nullptr && SplineClass != nullptr)
+		
+		if (World != nullptr && SplineClass != nullptr && !bAttached)
 		{
 			bAttached = true;
 			Rope = World->SpawnActor<ASpline>(SplineClass, BestGrapPoint->GetActorLocation(), FRotator(0, 0, 0));

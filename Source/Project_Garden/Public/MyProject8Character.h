@@ -75,6 +75,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<ASpline> SplineClass;
+	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	ASpline* Rope;
 
 protected:
 
@@ -93,8 +96,6 @@ protected:
 	UPROPERTY()
 	AGrapPoint* BestGrapPoint;
 
-	UPROPERTY()
-	ASpline* Rope;
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)

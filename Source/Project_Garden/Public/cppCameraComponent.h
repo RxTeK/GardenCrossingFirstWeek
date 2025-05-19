@@ -40,7 +40,7 @@ private:
 	TObjectPtr<AMyProject8Character> CharaRef;
 
 	UFUNCTION()
-	void ResetPostition();
+	void ResetPosition();
 
 	UFUNCTION()
 	void RotationToTarget();

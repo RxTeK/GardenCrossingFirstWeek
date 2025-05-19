@@ -3,6 +3,7 @@
 
 #include "CameraSpline.h"
 
+#include "BlueprintEditor.h"
 #include "InterfaceCamera.h"
 #include "Components/SplineComponent.h"
 #include "Components/BoxComponent.h"
@@ -30,13 +31,17 @@ ACameraSpline::ACameraSpline()
 
 	Enter = CreateDefaultSubobject<UBoxComponent>(TEXT("Enter"));
 	Enter->SetupAttachment(RootComponent);
+	Enter->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
 	Enter->SetGenerateOverlapEvents(true);
-	Enter->SetCollisionProfileName(TEXT("Trigger"));
 
 	Arrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow"));
 	Arrow->SetupAttachment(Enter);
 
-	Enter->OnComponentBeginOverlap.AddDynamic(this, &ACameraSpline::OnOverlap);
+	if(Enter)
+	{
+		Enter->OnComponentBeginOverlap.AddDynamic(this, &ACameraSpline::OnOverlap);
+		Enter->OnComponentBeginOverlap.AddDynamic(this, &ACameraSpline::EndOverlap);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -46,18 +51,23 @@ void ACameraSpline::BeginPlay()
 	
 }
 
-void ACameraSpline::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ACameraSpline::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	AMyProject8Character* Player = Cast<AMyProject8Character>(OtherActor);
 	if (Player && !Player->OnSpline)
 	{
-		if (OtherActor->GetClass()->ImplementsInterface(UInterfaceCamera::StaticClass()))
+		TArray<UActorComponent*> Components = OtherActor->GetComponents().Array();
+		for (UActorComponent* Component : Components)
 		{
-			IInterfaceCamera* InterfaceCam = Cast<IInterfaceCamera>(OtherActor);
-			if (InterfaceCam)
+			if (Component->GetClass()->ImplementsInterface(UInterfaceCamera::StaticClass()))
 			{
-				InterfaceCam->AddSpline(PlayerFocus, Target, Spline);
+				IInterfaceCamera* InterfaceCam = Cast<IInterfaceCamera>(Component);
+				if (InterfaceCam)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("OVERLAP via component"));
+					InterfaceCam->AddSpline(PlayerFocus, Target, Spline);
+					break;
+				}
 			}
 		}
 	}
@@ -66,7 +76,30 @@ void ACameraSpline::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
 void ACameraSpline::EndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 	int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	
+	AMyProject8Character* Player = Cast<AMyProject8Character>(OtherActor);
+	if (Player)
+	{
+		FVector Vec1 = CharaRef->GetCapsuleComponent()->GetForwardVector();
+		FVector Vec2 = Arrow->GetForwardVector();
+
+		if (!Vec1.Equals(Vec2, 0.5f))
+		{
+			TArray<UActorComponent*> Components = OtherActor->GetComponents().Array();
+			for (UActorComponent* Component : Components)
+			{
+				if (Component->GetClass()->ImplementsInterface(UInterfaceCamera::StaticClass()))
+				{
+					IInterfaceCamera* InterfaceCam = Cast<IInterfaceCamera>(Component);
+					if (InterfaceCam)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("OVERLAP via component"));
+						InterfaceCam->RemoveSpline();
+						break;
+					}
+				}
+			}
+		}
+	}
 }
 
 // Called every frame

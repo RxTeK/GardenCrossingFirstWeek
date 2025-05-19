@@ -48,7 +48,6 @@ void UcppCameraComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	{
 		FVector OnSplineCurrentLocation = CharaRef->GetCameraBoom()->GetComponentLocation();
 		FVector OnSplineTargetLocation = CharaRef->GetActorLocation();
-		float InterpSpeed = 7.0f;
 
 		FVector InterpCameraBoom = FMath::VInterpTo(OnSplineCurrentLocation, OnSplineTargetLocation, DeltaTime, InterpSpeedlag);
 		
@@ -56,7 +55,7 @@ void UcppCameraComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	}
 }
 
-void UcppCameraComponent::ResetPostition()
+void UcppCameraComponent::ResetPosition()
 {
 	FVector CurrentLocation = CharaRef->GetFollowCamera()->GetRelativeLocation();
 	FVector TargetLocation = Postition000;
@@ -78,26 +77,31 @@ void UcppCameraComponent::ResetPostition()
 void UcppCameraComponent::RotationToTarget()
 {
 	if (!PostRoot || !CharaRef || !CharaRef->GetFollowCamera()) return;
+	{
+		FVector StartLocation = PlayerGood
+			? CharaRef->GetCapsuleComponent()->GetComponentLocation()
+			: PostRoot->GetComponentLocation();
 
-	FVector StartLocation = PlayerGood
-		? CharaRef->GetFollowCamera()->GetComponentLocation()
-		: CharaRef->GetCapsuleComponent()->GetComponentLocation();
+		FVector TargetLocationRotation = CharaRef.Get()->GetFollowCamera()->GetComponentLocation();
+		FRotator TargetRotator = UKismetMathLibrary::FindLookAtRotation(TargetLocationRotation, StartLocation);
+		FRotator CurrentRotator = CharaRef->GetFollowCamera()->GetComponentRotation();
+		FRotator InterpRotation = FMath::RInterpTo(CurrentRotator, TargetRotator, GetWorld()->GetDeltaSeconds(), 5.0f);
 
-	FVector TargetLocation = PostRoot->GetComponentLocation();
-	
-	FRotator TargetRotator = UKismetMathLibrary::FindLookAtRotation(StartLocation, TargetLocation);
-	
-	FRotator CurrentRotator = CharaRef->GetFollowCamera()->GetComponentRotation();
+		CharaRef->GetFollowCamera()->SetWorldRotation(InterpRotation);
 
-	FRotator InterpRotation = FMath::RInterpTo(CurrentRotator, TargetRotator, GetWorld()->GetDeltaSeconds(), 5.0f);
+		FVector CurrentLocation = CharaRef->GetFollowCamera()->GetComponentLocation();
+		
+		FVector TargetLocation = SplineComponent->FindLocationClosestToWorldLocation(CharaRef->GetActorLocation(), ESplineCoordinateSpace::World);
+		FVector InterpLocation = FMath::VInterpTo(CurrentLocation, TargetLocation, GetWorld()->GetDeltaSeconds(), 4.0f);
 
-	CharaRef->GetFollowCamera()->SetWorldRotation(InterpRotation);
+		CharaRef->GetFollowCamera()->SetWorldLocation(InterpLocation);
+		
+	}
 }
  
 
 void UcppCameraComponent::AddSpline(bool PLayer, USceneComponent* Target, USplineComponent* Spline)
 {
-	UE_LOG(LogTemp, Warning, TEXT("AddSpline called !"));
 	PlayerGood = PLayer;
 	SplineComponent = Spline;
 	PostRoot = Target;
@@ -106,7 +110,7 @@ void UcppCameraComponent::AddSpline(bool PLayer, USceneComponent* Target, USplin
 	GetWorld()->GetTimerManager().ClearTimer(EndTimerHandle);
 	float Interval = GetWorld()->GetDeltaSeconds();
 
-	GetWorld()->GetTimerManager().SetTimer(StartSplineTimerHandle, this, &UcppCameraComponent::RotationToTarget, 1.0f, false);
+	GetWorld()->GetTimerManager().SetTimer(StartSplineTimerHandle, this, &UcppCameraComponent::RotationToTarget, Interval, true);
 }
 
 void UcppCameraComponent::RemoveSpline()
@@ -115,7 +119,7 @@ void UcppCameraComponent::RemoveSpline()
 	GetWorld()->GetTimerManager().ClearTimer(StartSplineTimerHandle);
 	float Interval = GetWorld()->GetDeltaSeconds();
 
-	GetWorld()->GetTimerManager().SetTimer(EndTimerHandle, this, &UcppCameraComponent::RotationToTarget, 1.0f, false);
+	GetWorld()->GetTimerManager().SetTimer(EndTimerHandle, this, &UcppCameraComponent::RotationToTarget, Interval, true);
 	
 }
 

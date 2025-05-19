@@ -263,7 +263,7 @@ void AMyProject8Character::Move(const FInputActionValue& Value)
 			if (Rope != nullptr)
 			{
 				MovementVector *= -25550.0f;
-				Rope->SkeletalMesh->AddForce(FVector(0.0f,MovementVector.Y,0.0f),FName(TEXT("Bone_039")));
+				Rope->SkeletalMesh->AddForce(FVector(MovementVector.X,MovementVector.Y,0.0f),FName(TEXT("Bone_039")));
 			}
 		}
 		else

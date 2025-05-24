@@ -54,8 +54,6 @@ class AMyProject8Character : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* InteractionAction;
 
-	
-
 public:
 	AMyProject8Character();
 	std::vector <AGrapPoint*> GrapPoints;

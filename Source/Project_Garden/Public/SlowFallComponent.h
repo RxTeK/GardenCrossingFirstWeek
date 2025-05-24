@@ -45,6 +45,18 @@ public:
 
 	UPROPERTY()
 	bool Plane = true;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Glider")
+	TSubclassOf<AActor> GliderBPClass;
+
+	UPROPERTY()
+	AActor* GliderInstance;
+
+	UPROPERTY(EditAnywhere, Category = "Glider")
+	float MaxGlideTime = 5.0f;
+	
+	UPROPERTY(EditAnywhere, Category = "Glider")
+	float GlideDeteriorationRate = 1.0f;
 	
 private:
 	UPROPERTY()
@@ -52,4 +64,13 @@ private:
 
 	UPROPERTY()
 	bool AlreadyPlane;
+
+	UPROPERTY()
+	float GlideTimer = 0.0f;
+
+	UFUNCTION()
+	void SpawnAndAttachGlider();
+
+	UFUNCTION()
+	void DestroyGlider();
 };

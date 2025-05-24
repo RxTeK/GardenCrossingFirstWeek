@@ -39,10 +39,26 @@ void USlowFallComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 
 	if(CharaRef->GetCharacterMovement()->IsMovingOnGround())
 	{
+		DestroyGlider();
 		CharaRef->GetCharacterMovement()->GravityScale = GravityScaleClassic;
 		CharaRef->GetCharacterMovement()->AirControl = AirControlClassic;
 		Plane = true;
 		StopPlane = false;
+	}
+	else if (!Plane) // Donc : en train de planer
+	{
+		GlideTimer += DeltaTime;
+		
+		float DeteriorationFactor = FMath::Clamp(GlideTimer / MaxGlideTime, 0.0f, 1.0f);
+		
+		float NewGravity = FMath::Lerp(GravityScaleGlide, GravityScaleClassic, DeteriorationFactor);
+		CharaRef->GetCharacterMovement()->GravityScale = NewGravity;
+		
+		if (GlideTimer >= MaxGlideTime)
+		{
+			GravityClassic();
+			DestroyGlider();
+		}
 	}
 }
 
@@ -66,6 +82,9 @@ void USlowFallComponent::SlowFallOn()
 			CharaRef->GetCharacterMovement()->Velocity.Z = 0;
 			CharaRef->GetCharacterMovement()->GravityScale = GravityScaleGlide;
 			CharaRef->GetCharacterMovement()->AirControl = AirControlGlide;
+			GlideTimer = 0.0f;
+			
+			SpawnAndAttachGlider();
 		}
 		else
 		{
@@ -82,5 +101,36 @@ void USlowFallComponent::GravityClassic()
 	CharaRef->GetCharacterMovement()->AirControl = AirControlClassic;
 	Plane = true;
 	AlreadyPlane = false;
+	DestroyGlider();
 }
+
+void USlowFallComponent::SpawnAndAttachGlider()
+{
+	if (!GliderBPClass || !CharaRef || GliderInstance)
+		return;
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = CharaRef;
+
+	GliderInstance = GetWorld()->SpawnActor<AActor>(GliderBPClass, CharaRef->GetActorLocation(), FRotator::ZeroRotator, SpawnParams);
+
+	if (GliderInstance)
+	{
+		USkeletalMeshComponent* SkeletalMesh = CharaRef->GetMesh();
+		if (SkeletalMesh)
+		{
+			GliderInstance->AttachToComponent(SkeletalMesh, FAttachmentTransformRules::SnapToTargetIncludingScale, FName("Glider"));
+		}
+	}
+}
+
+void USlowFallComponent::DestroyGlider()
+{
+	if (GliderInstance)
+	{
+		GliderInstance->Destroy();
+		GliderInstance = nullptr;
+	}
+}
+
 

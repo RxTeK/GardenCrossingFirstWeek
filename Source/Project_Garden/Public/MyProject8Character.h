@@ -11,6 +11,7 @@
 #include "Logging/LogMacros.h"
 #include "MyProject8Character.generated.h"
 
+class USwimComponent;
 class USpringArmComponent;
 class USlowFallComponent;
 class UCameraComponent;
@@ -114,6 +115,9 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	
+	UPROPERTY()
+	USwimComponent* SwimComponentRef;
 
 private:
 

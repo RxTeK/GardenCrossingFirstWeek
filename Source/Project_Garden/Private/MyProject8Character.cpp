@@ -21,6 +21,7 @@
 #include "Components/SphereComponent.h"
 #include "SlowFallComponent.h"
 #include "Spline.h"
+#include "SwimComponent.h"
 #include "DataWrappers/ChaosVDQueryDataWrappers.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -68,6 +69,8 @@ AMyProject8Character::AMyProject8Character()
 	Sphere->OnComponentEndOverlap.AddDynamic(this, &AMyProject8Character::OnComponentEndOverlap);
 
 	SlowFallComponent = CreateDefaultSubobject<USlowFallComponent>(TEXT("SlowFallComponent"));
+	
+	SwimComponentRef = CreateDefaultSubobject<USwimComponent>(TEXT("SwimComponent"));
 
 	
 
@@ -229,7 +232,12 @@ void AMyProject8Character::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMyProject8Character::Look);
 
 		//Interact
-		EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, this, &AMyProject8Character::Interaction);
+		if (SwimComponentRef)
+		{
+			EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, SwimComponentRef, &USwimComponent::GrabStart);
+			EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Completed, SwimComponentRef, &USwimComponent::GrabEnd);
+			EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Canceled, SwimComponentRef, &USwimComponent::GrabEnd);
+		}
 	}
 	else
 	{

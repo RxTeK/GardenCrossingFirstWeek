@@ -21,15 +21,20 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	
+	
 
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void GrabStart();
 	void GrabEnd();
+	FVector GetGrabStartLocation;
+	float LenghtOfGrab;
+	bool Grabbed;
+	float GravityScaleBase;
 
 	
 	UPROPERTY()
-	AMyProject8Character* CharacterRef;
+	AMyProject8Character* PlayerRef;
 
 };

@@ -9,7 +9,9 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "CableComponent.h"
 #include "MyProject8Character.generated.h"
+
 
 class USwimComponent;
 class USpringArmComponent;
@@ -95,8 +97,7 @@ protected:
 	UFUNCTION()
 	float height(AGrapPoint* Point);
 
-	UPROPERTY()
-	AGrapPoint* BestGrapPoint;
+	
 
 
 
@@ -116,9 +117,15 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USwimComponent* SwimComponentRef;
 
+	UPROPERTY(EditAnywhere)
+	UCableComponent* CableComponentRef;
+	
+	UPROPERTY()
+	AGrapPoint* BestGrapPoint;
+	
 private:
 
 	UPROPERTY()

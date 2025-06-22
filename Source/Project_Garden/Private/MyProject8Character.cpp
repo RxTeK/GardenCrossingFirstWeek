@@ -72,6 +72,9 @@ AMyProject8Character::AMyProject8Character()
 	
 	SwimComponentRef = CreateDefaultSubobject<USwimComponent>(TEXT("SwimComponent"));
 
+	CableComponentRef = CreateDefaultSubobject<UCableComponent>(TEXT("CableComponent"));
+	CableComponentRef->SetupAttachment(RootComponent);
+
 	
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 

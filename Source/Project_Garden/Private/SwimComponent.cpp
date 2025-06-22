@@ -3,6 +3,8 @@
 
 #include "SwimComponent.h"
 
+#include "GameFramework/CharacterMovementComponent.h"
+
 // Sets default values for this component's properties
 USwimComponent::USwimComponent()
 {
@@ -18,8 +20,8 @@ USwimComponent::USwimComponent()
 void USwimComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	CharacterRef = Cast<AMyProject8Character>(GetOwner());
-	if (CharacterRef)
+	PlayerRef = Cast<AMyProject8Character>(GetOwner());
+	if (PlayerRef)
 	{
 		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Yellow,"Start Swim Component");
 	}
@@ -28,12 +30,32 @@ void USwimComponent::BeginPlay()
 void USwimComponent::GrabStart()
 {
 	GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Yellow,"Start");
-
+	if (PlayerRef->BestGrapPoint != nullptr)
+	{
+		GravityScaleBase = PlayerRef->GetCharacterMovement()->GravityScale;
+		PlayerRef->CableComponentRef->SetHiddenInGame(false);
+		GetGrabStartLocation = PlayerRef->BestGrapPoint->GetActorLocation();
+		PlayerRef->CableComponentRef->SetWorldLocation(GetGrabStartLocation);
+		PlayerRef->CableComponentRef->EndLocation = PlayerRef->GetMesh()->GetSocketTransform(FName("hand_r"),ERelativeTransformSpace::RTS_Actor).GetLocation();
+		LenghtOfGrab = ((PlayerRef->GetActorLocation() - GetGrabStartLocation).Length()) - 400.0f;
+		PlayerRef->CableComponentRef->CableLength = LenghtOfGrab;
+		Grabbed = true;
+	}
 }
 
 void USwimComponent::GrabEnd()
 {
-	GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Yellow,"END");
+	if (Grabbed)
+	{
+		PlayerRef->GetCharacterMovement()->GravityScale = GravityScaleBase;
+		if (!PlayerRef->GetCharacterMovement()->IsMovingOnGround())
+		{
+			PlayerRef->LaunchCharacter(PlayerRef->GetVelocity().GetSafeNormal(1E-6) * 500,false,false);
+		}
+		Grabbed = false;
+		PlayerRef->CableComponentRef->SetHiddenInGame(true);
+		PlayerRef->GetCharacterMovement()->AirControl = 0.35f;
+	}
 
 }
 

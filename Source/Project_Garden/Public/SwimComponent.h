@@ -32,7 +32,10 @@ public:
 	float LenghtOfGrab;
 	bool Grabbed;
 	float GravityScaleBase;
+	bool PickA;
 
+	void CalculateSwingForce();
+	bool IsMovingOnGround();
 	
 	UPROPERTY()
 	AMyProject8Character* PlayerRef;

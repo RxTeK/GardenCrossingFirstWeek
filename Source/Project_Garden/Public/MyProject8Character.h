@@ -126,13 +126,13 @@ public:
 	UPROPERTY()
 	AGrapPoint* BestGrapPoint;
 	
+	UPROPERTY()
+	bool bAttached = false;
+	
 private:
 
 	UPROPERTY()
 	bool bCanJump;
-
-	UPROPERTY()
-	bool bAttached = false;
 	
 	UFUNCTION()
 	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;

@@ -90,23 +90,38 @@ void AMyProject8Character::BeginPlay()
 void AMyProject8Character::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
-	if (GrapPoints.size() > 0 and !bAttached)
+	if (!bAttached)
 	{
-		BestGrapPoint = GrapPoints[0];
-		for (AGrapPoint* GrapPoint : GrapPoints)
+		if (GrapPoints.size() > 0)
 		{
-			GrapPoint->CanGrap(false);
-			if (height(BestGrapPoint) > height(GrapPoint))
+			BestGrapPoint = GrapPoints[0];
+			for (AGrapPoint* GrapPoint : GrapPoints)
 			{
-				BestGrapPoint = GrapPoint;
+				GrapPoint->CanGrap(false);
+				if (height(BestGrapPoint) > height(GrapPoint))
+				{
+					BestGrapPoint = GrapPoint;
+				}
+			}
+			if (height(BestGrapPoint) >= 100.0f)
+			{
+				bAttached = false;
+				BestGrapPoint = nullptr;
+			}
+			else
+			{
+				BestGrapPoint->CanGrap(true);
 			}
 		}
-		BestGrapPoint->CanGrap(true);
+		else if (BestGrapPoint != nullptr)
+		{
+			BestGrapPoint = nullptr;
+		}
 	}
-	else if (BestGrapPoint != nullptr)
+	else if (std::ranges::find(GrapPoints, BestGrapPoint) == GrapPoints.end())
 	{
 		BestGrapPoint = nullptr;
+		bAttached = false;
 	}
 }
 
@@ -265,20 +280,8 @@ void AMyProject8Character::Move(const FInputActionValue& Value)
 		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement
-		if (bAttached)
-		{
-			if (Rope != nullptr)
-			{
-				MovementVector *= -25550.0f;
-				Rope->SkeletalMesh->AddForce(FVector(MovementVector.X,MovementVector.Y,0.0f),FName(TEXT("Bone_039")));
-			}
-		}
-		else
-		{
-			AddMovementInput(ForwardDirection, MovementVector.Y);
-			AddMovementInput(RightDirection, MovementVector.X);
-		}
+		AddMovementInput(ForwardDirection, MovementVector.Y);
+		AddMovementInput(RightDirection, MovementVector.X);
 		
 	}
 }
@@ -329,9 +332,15 @@ void AMyProject8Character::Interaction()
 
 float AMyProject8Character::height(AGrapPoint* Point)
 {
-	float Height = 0.0f;
-	//Height = Point->GetDistanceTo(this);
-	Height += UE::Geometry::Dot(Point->Arrow->GetForwardVector(), this->GetFollowCamera()->GetForwardVector());
+	float Height = Point->GetDistanceTo(this) / 100.0f;
+	if (UE::Geometry::Dot(Point->Arrow->GetForwardVector(), this->GetFollowCamera()->GetForwardVector()) < 0.0f)
+	{
+		Height += UE::Geometry::Dot(Point->Arrow->GetForwardVector(), this->GetFollowCamera()->GetForwardVector());
+	}
+	else
+	{
+		Height += 500.0f;
+	}
 	GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::Yellow,FString::Printf(TEXT("Height = %f"), Height));
 	return Height;
 }

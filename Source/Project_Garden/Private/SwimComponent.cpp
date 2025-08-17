@@ -69,13 +69,19 @@ void USwimComponent::CalculateSwingForce()
 	{
 		if (!IsMovingOnGround())
 		{
-			GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::Yellow,"Fly");
+			
 			PlayerRef->CableComponentRef->SetWorldLocation(GetGrabStartLocation);
 			PlayerRef->CableComponentRef->EndLocation = PlayerRef->GetMesh()->GetSocketTransform(FName("hand_r"),ERelativeTransformSpace::RTS_Actor).GetLocation();
 			const float Value = ((PlayerRef->GetActorLocation().Z + 500.0f) > PlayerRef->BestGrapPoint->GetActorLocation().Z) ? 1.5f : 0.0f;
 			const float Force = FMath::Abs(Value * 2.0f);
 			PlayerRef->GetCharacterMovement()->GravityScale = Force;
 			PlayerRef->GetCharacterMovement()->AirControl = 2.0f;
+			
+			if (PlayerRef->GetVelocity().Length() <= 300.0f)
+			{
+				FVector NewDirection = (PlayerRef->BestGrapPoint->GetActorLocation() - PlayerRef->GetActorLocation()).GetSafeNormal(1E-08) * 5.0f;
+				PlayerRef->GetCharacterMovement()->AddInputVector(FVector(NewDirection.X, NewDirection.Y, 0.0f));
+			}
 			
 			FVector DiffPlayerAndPoint = PlayerRef->GetActorLocation()-GetGrabStartLocation;
 			FVector Direction = (DiffPlayerAndPoint.GetSafeNormal(1E-8) * (FVector::DotProduct(PlayerRef->GetVelocity(),DiffPlayerAndPoint)))* -5.0f;

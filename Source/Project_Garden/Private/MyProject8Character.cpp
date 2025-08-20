@@ -201,6 +201,13 @@ void AMyProject8Character::Plane()
 	}
 }
 
+void AMyProject8Character::OnMovementFinish()
+{
+	MovementVector.X = 0.0f;
+	MovementVector.Y = 0.0f;
+	return;
+}
+
 
 void AMyProject8Character::ResetGlide()
 {
@@ -245,6 +252,9 @@ void AMyProject8Character::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Canceled, this, &AMyProject8Character::newStopJumping);
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMyProject8Character::Move);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Canceled, this, &AMyProject8Character::OnMovementFinish);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &AMyProject8Character::OnMovementFinish);
+		
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMyProject8Character::Look);
@@ -266,7 +276,7 @@ void AMyProject8Character::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 void AMyProject8Character::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
-	FVector2D MovementVector = Value.Get<FVector2D>();
+	MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
@@ -279,10 +289,10 @@ void AMyProject8Character::Move(const FInputActionValue& Value)
 	
 		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
+		
+		
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
-		
 	}
 }
 

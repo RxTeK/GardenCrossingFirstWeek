@@ -128,6 +128,9 @@ public:
 	
 	UPROPERTY()
 	bool bAttached = false;
+
+	UPROPERTY()
+	FVector2D MovementVector;
 	
 private:
 
@@ -165,5 +168,8 @@ private:
 
 	UPROPERTY()
 	bool bHit;
+
+	UFUNCTION()
+	void OnMovementFinish();
 };
 

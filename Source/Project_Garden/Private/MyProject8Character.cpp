@@ -22,6 +22,7 @@
 #include "SlowFallComponent.h"
 #include "Spline.h"
 #include "SwimComponent.h"
+#include "SlingshotComponent.h"
 #include "DataWrappers/ChaosVDQueryDataWrappers.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -71,6 +72,8 @@ AMyProject8Character::AMyProject8Character()
 	SlowFallComponent = CreateDefaultSubobject<USlowFallComponent>(TEXT("SlowFallComponent"));
 	
 	SwimComponentRef = CreateDefaultSubobject<USwimComponent>(TEXT("SwimComponent"));
+	
+	SlingshotComponentRef = CreateDefaultSubobject<USlingshotComponent>(TEXT("SlingshotComponent"));
 
 	CableComponentRef = CreateDefaultSubobject<UCableComponent>(TEXT("CableComponent"));
 	CableComponentRef->SetupAttachment(RootComponent);
@@ -265,6 +268,13 @@ void AMyProject8Character::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 			EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Started, SwimComponentRef, &USwimComponent::GrabStart);
 			EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Completed, SwimComponentRef, &USwimComponent::GrabEnd);
 			EnhancedInputComponent->BindAction(InteractionAction, ETriggerEvent::Canceled, SwimComponentRef, &USwimComponent::GrabEnd);
+		}
+
+		if (SlingshotComponentRef)
+		{
+			EnhancedInputComponent->BindAction(SlingshotAction, ETriggerEvent::Started, SlingshotComponentRef, &USlingshotComponent::ShootStart);
+			EnhancedInputComponent->BindAction(SlingshotAction, ETriggerEvent::Completed, SlingshotComponentRef, &USlingshotComponent::ShootEnd);
+			EnhancedInputComponent->BindAction(SlingshotAction, ETriggerEvent::Canceled, SlingshotComponentRef, &USlingshotComponent::ShootEnd);
 		}
 	}
 	else

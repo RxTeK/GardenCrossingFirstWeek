@@ -13,8 +13,11 @@ USwimComponent::USwimComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-	
-	
+	LenghtOfGrab = 0.0f;
+	PickA = false;
+	Grabbed = false;
+	GravityScaleBase = 0.0f;
+	PlayerRef = nullptr;
 }
 
 
@@ -22,6 +25,7 @@ USwimComponent::USwimComponent()
 void USwimComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	
 	PlayerRef = Cast<AMyProject8Character>(GetOwner());
 	if (PlayerRef)
 	{

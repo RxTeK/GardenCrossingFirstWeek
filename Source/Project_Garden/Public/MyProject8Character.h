@@ -14,6 +14,7 @@
 
 
 class USwimComponent;
+class USlingshotComponent;
 class USpringArmComponent;
 class USlowFallComponent;
 class UCameraComponent;
@@ -56,6 +57,9 @@ class AMyProject8Character : public ACharacter
 	/** Interaction Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* InteractionAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* SlingshotAction;
 
 public:
 	AMyProject8Character();
@@ -119,6 +123,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USwimComponent* SwimComponentRef;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USlingshotComponent* SlingshotComponentRef;
 
 	UPROPERTY(EditAnywhere)
 	UCableComponent* CableComponentRef;

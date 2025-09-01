@@ -22,6 +22,7 @@
 #include "SlowFallComponent.h"
 #include "Spline.h"
 #include "SwimComponent.h"
+#include "ClimbingComponent.h"
 #include "SlingshotComponent.h"
 #include "DataWrappers/ChaosVDQueryDataWrappers.h"
 
@@ -74,6 +75,8 @@ AMyProject8Character::AMyProject8Character()
 	SwimComponentRef = CreateDefaultSubobject<USwimComponent>(TEXT("SwimComponent"));
 	
 	SlingshotComponentRef = CreateDefaultSubobject<USlingshotComponent>(TEXT("SlingshotComponent"));
+
+	ClimbingComponentRef = CreateDefaultSubobject<UClimbingComponent>(TEXT("ClimbingComponent"));
 
 	CableComponentRef = CreateDefaultSubobject<UCableComponent>(TEXT("CableComponent"));
 	CableComponentRef->SetupAttachment(RootComponent);
@@ -208,7 +211,6 @@ void AMyProject8Character::OnMovementFinish()
 {
 	MovementVector.X = 0.0f;
 	MovementVector.Y = 0.0f;
-	return;
 }
 
 
@@ -288,21 +290,33 @@ void AMyProject8Character::Move(const FInputActionValue& Value)
 	// input is a Vector2D
 	MovementVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
+	if (Controller != nullptr && ClimbingComponentRef)
 	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
-
-		// get forward vector
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	
-		// get right vector 
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		if (ClimbingComponentRef->Climb())
+		{
+			const FRotator Rotation = GetActorRotation();
+			const FRotator YawRotation(0, Rotation.Yaw, 0);
+			
+			const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Z);
+			const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+			
+			AddMovementInput(ForwardDirection, MovementVector.Y);
+			AddMovementInput(RightDirection, MovementVector.X);
+		}
+		else
+		{
+			// find out which way is forward
+			const FRotator Rotation = Controller->GetControlRotation();
+			const FRotator YawRotation(0, Rotation.Yaw, 0);
+			// get forward vector
+			const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+			// get right vector 
+			const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+			
+			AddMovementInput(ForwardDirection, MovementVector.Y);
+			AddMovementInput(RightDirection, MovementVector.X);
+		}
 		
-		
-		AddMovementInput(ForwardDirection, MovementVector.Y);
-		AddMovementInput(RightDirection, MovementVector.X);
 	}
 }
 

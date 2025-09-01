@@ -15,6 +15,7 @@
 
 class USwimComponent;
 class USlingshotComponent;
+class UClimbingComponent;
 class USpringArmComponent;
 class USlowFallComponent;
 class UCameraComponent;
@@ -126,6 +127,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USlingshotComponent* SlingshotComponentRef;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UClimbingComponent* ClimbingComponentRef;
 
 	UPROPERTY(EditAnywhere)
 	UCableComponent* CableComponentRef;

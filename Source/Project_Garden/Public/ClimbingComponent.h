@@ -19,14 +19,14 @@ public:
 	// Sets default values for this component's properties
 	UClimbingComponent();
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	AMyProject8Character* PlayerRef;
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	FCollisionQueryParams CollisionParams;
-	float ClimbedRotation;
+
 
 
 public:	
@@ -34,10 +34,14 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	bool Climb();
-	bool CanClimbLeft();
-	bool CanClimbRight();
-	bool CanClimbUp();
-	bool CanClimbDown();
+	bool CanClimbLeftOrRight(float Direction);
+	bool CanClimbUpOrDown(float Direction);
+
+	UPROPERTY()
+	bool OnGround;
+
+	UPROPERTY(EditAnywhere)
+	float MaxClimbSpeed;
 
 		
 };

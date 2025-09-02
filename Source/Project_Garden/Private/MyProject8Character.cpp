@@ -297,11 +297,23 @@ void AMyProject8Character::Move(const FInputActionValue& Value)
 			const FRotator Rotation = GetActorRotation();
 			const FRotator YawRotation(0, Rotation.Yaw, 0);
 			
-			const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Z);
+			FVector UpDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Z);
 			const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-			
-			AddMovementInput(ForwardDirection, MovementVector.Y);
-			AddMovementInput(RightDirection, MovementVector.X);
+
+			if (ClimbingComponentRef->OnGround && FMath::Sign(MovementVector.Y) < 0.0f)
+			{
+				UpDirection =  FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+			}
+
+			if (ClimbingComponentRef->CanClimbUpOrDown(MovementVector.Y))
+			{
+				AddMovementInput(UpDirection, MovementVector.Y);
+			}
+
+			if (ClimbingComponentRef->CanClimbLeftOrRight(MovementVector.X))
+			{
+				AddMovementInput(RightDirection, MovementVector.X);
+			}
 		}
 		else
 		{
@@ -364,7 +376,7 @@ void AMyProject8Character::Interaction()
 	
 }
 
-float AMyProject8Character::height(AGrapPoint* Point)
+float AMyProject8Character::height(const AGrapPoint* Point)
 {
 	float Height = Point->GetDistanceTo(this) / 100.0f;
 	if (UE::Geometry::Dot(Point->Arrow->GetForwardVector(), this->GetFollowCamera()->GetForwardVector()) < 0.0f)

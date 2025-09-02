@@ -100,7 +100,7 @@ protected:
 	void Interaction();
 
 	UFUNCTION()
-	float height(AGrapPoint* Point);
+	float height(const AGrapPoint* Point);
 
 	
 

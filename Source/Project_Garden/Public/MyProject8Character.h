@@ -142,6 +142,9 @@ public:
 
 	UPROPERTY()
 	FVector2D MovementVector;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float LaunchSpeed = 500.0f;
 	
 private:
 

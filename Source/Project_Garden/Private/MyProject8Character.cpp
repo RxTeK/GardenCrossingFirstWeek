@@ -25,6 +25,7 @@
 #include "ClimbingComponent.h"
 #include "SlingshotComponent.h"
 #include "DataWrappers/ChaosVDQueryDataWrappers.h"
+#include "Kismet/KismetMathLibrary.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -172,6 +173,21 @@ void AMyProject8Character::newJump()
 	{
 		LaunchCharacter(LaunchVelocity, false, false);
 	}
+
+	if (ClimbingComponentRef != nullptr)
+	{
+		if (ClimbingComponentRef->Climb())
+		{
+			FVector Climb = GetActorLocation() + (GetActorForwardVector() * LaunchSpeed) * -1.0f;
+			FVector Launch = (GetVelocity() * LaunchSpeed) + Climb;
+			DrawDebugLine(GetWorld(), GetActorLocation(), Launch, FColor::Blue, false, 10.0f, 0, 1.0f);
+			/*
+			LaunchCharacter(Launch, false, false);
+			SetActorRotation(FRotator(UKismetMathLibrary::MakeRotFromX(Launch)));
+			*/
+		}
+	}
+	
 }
 
 void AMyProject8Character::newStopJumping()

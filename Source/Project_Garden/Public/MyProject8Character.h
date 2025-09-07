@@ -144,12 +144,32 @@ public:
 	FVector2D MovementVector;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float LaunchLenght = 500.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float LaunchSpeed = 500.0f;
+	
+	UPROPERTY()
+	bool IsJumpOnClimb = false;
 	
 private:
 
 	UPROPERTY()
 	bool bCanJump;
+
+	UFUNCTION()
+	void JumpWall(FVector End);
+
+	UPROPERTY()
+	float LerpAlpha;
+
+	UPROPERTY()
+	FVector PositionPlayerForLerp;
+
+	FTimerHandle ClimbTimerHandle;
+
+	UPROPERTY()
+	float Gravity;
 	
 	UFUNCTION()
 	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;

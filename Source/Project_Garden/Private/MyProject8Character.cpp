@@ -23,8 +23,10 @@
 #include "Spline.h"
 #include "SwimComponent.h"
 #include "ClimbingComponent.h"
+#include "FrameTypes.h"
 #include "SlingshotComponent.h"
 #include "DataWrappers/ChaosVDQueryDataWrappers.h"
+#include "DSP/SpectrumAnalyzer.h"
 #include "Kismet/KismetMathLibrary.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -130,6 +132,7 @@ void AMyProject8Character::Tick(float DeltaTime)
 		BestGrapPoint = nullptr;
 		bAttached = false;
 	}
+	
 }
 
 void AMyProject8Character::OnComponentOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -176,18 +179,39 @@ void AMyProject8Character::newJump()
 
 	if (ClimbingComponentRef != nullptr)
 	{
-		if (ClimbingComponentRef->Climb())
+		if (ClimbingComponentRef->Climb() && !IsJumpOnClimb)
 		{
-			FVector Climb = GetActorLocation() + (GetActorForwardVector() * LaunchSpeed) * -1.0f;
-			FVector Launch = (GetVelocity() * LaunchSpeed) + Climb;
+			IsJumpOnClimb = true;
+			FVector Climb = GetActorLocation() + (GetActorForwardVector() * (LaunchLenght * LaunchSpeed)) * -1.0f;
+			FVector Launch = GetVelocity().GetSafeNormal() * (LaunchLenght * LaunchSpeed) + Climb;
 			DrawDebugLine(GetWorld(), GetActorLocation(), Launch, FColor::Blue, false, 10.0f, 0, 1.0f);
-			/*
-			LaunchCharacter(Launch, false, false);
-			SetActorRotation(FRotator(UKismetMathLibrary::MakeRotFromX(Launch)));
-			*/
+			PositionPlayerForLerp = GetActorLocation();
+			LerpAlpha = 0.f;
+			Gravity = this->GetCharacterMovement()->GravityScale;
+			GetCharacterMovement()->GravityScale = 0.0f;
+			SetActorRotation(FRotator(UKismetMathLibrary::MakeRotFromX(End)));
+			GetWorldTimerManager().ClearTimer(ClimbTimerHandle);
+			GetWorldTimerManager().SetTimer(ClimbTimerHandle, [this, Launch](){this->JumpWall(Launch);}, GetWorld()->DeltaTimeSeconds, true);
+			
 		}
 	}
 	
+}
+
+void AMyProject8Character::JumpWall(FVector End)
+{
+	LerpAlpha += GetWorld()->DeltaTimeSeconds;
+	FVector NewLocation = FMath::Lerp(PositionPlayerForLerp, End, LerpAlpha);
+	SetActorLocation(NewLocation);
+	if (LerpAlpha >= 0.1f)
+	{
+		SetActorLocation(End);
+		this->GetCharacterMovement()->GravityScale = Gravity;
+		IsJumpOnClimb = false;
+		ClimbingComponentRef->Climb();
+		
+		GetWorldTimerManager().ClearTimer(ClimbTimerHandle);
+	}
 }
 
 void AMyProject8Character::newStopJumping()
@@ -208,7 +232,7 @@ void AMyProject8Character::newStopJumping()
 
 void AMyProject8Character::Plane()
 {
-	if (GetCharacterMovement()->IsFalling())
+	if (GetCharacterMovement()->IsFalling() && !ClimbingComponentRef->Climb() && !SwimComponentRef->Grabbed)
 	{
 		if(!bHit)
 		{
@@ -237,6 +261,8 @@ void AMyProject8Character::ResetGlide()
 	bIsStartingGlide = false;
 	bIsEndingGlide = false;
 }
+
+
 
 void AMyProject8Character::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)
 {

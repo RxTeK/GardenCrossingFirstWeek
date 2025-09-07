@@ -61,8 +61,15 @@ bool UClimbingComponent::Climb()
 					PlayerRef->GetCharacterMovement()->MaxFlySpeed = MaxClimbSpeed;
 					PlayerRef->GetCharacterMovement()->BrakingDecelerationFlying = MaxClimbSpeed * 10.0f;
 				}
-				const float ClimbedRotation = UKismetMathLibrary::MakeRotFromX(OutHit.Normal).Yaw + 180.0f;
-				PlayerRef->SetActorRotation(FRotator(PlayerRef->GetActorRotation().Pitch,ClimbedRotation,PlayerRef->GetActorRotation().Roll));
+				if (!PlayerRef->IsJumpOnClimb)
+				{
+					const float ClimbedRotation = UKismetMathLibrary::MakeRotFromX(OutHit.Normal).Yaw + 180.0f;
+					PlayerRef->SetActorRotation(FRotator(PlayerRef->GetActorRotation().Pitch,ClimbedRotation,PlayerRef->GetActorRotation().Roll));
+				}
+				else
+				{
+					PlayerRef->GetCharacterMovement()->BrakingDecelerationFlying = 0.0f;
+				}
 				return true;
 			}
 		}

@@ -179,16 +179,14 @@ void AMyProject8Character::newJump()
 
 	if (ClimbingComponentRef != nullptr)
 	{
-		if (ClimbingComponentRef->Climb() && !IsJumpOnClimb)
+		if (ClimbingComponentRef->Climb() && !IsJumpOnClimb && !ClimbingComponentRef->PastOnTop)
 		{
 			IsJumpOnClimb = true;
-			FVector Climb = GetActorLocation() + (GetActorForwardVector() * (LaunchLenght * LaunchSpeed)) * -1.0f;
-			FVector Launch = GetVelocity().GetSafeNormal() * (LaunchLenght * LaunchSpeed) + Climb;
+			FVector Climb = GetActorLocation() ;
+			FVector Launch = GetVelocity().GetSafeNormal() * (LaunchLenght ) + Climb ;
 			DrawDebugLine(GetWorld(), GetActorLocation(), Launch, FColor::Blue, false, 10.0f, 0, 1.0f);
 			PositionPlayerForLerp = GetActorLocation();
 			LerpAlpha = 0.f;
-			Gravity = this->GetCharacterMovement()->GravityScale;
-			GetCharacterMovement()->GravityScale = 0.0f;
 			SetActorRotation(FRotator(UKismetMathLibrary::MakeRotFromX(End)));
 			GetWorldTimerManager().ClearTimer(ClimbTimerHandle);
 			GetWorldTimerManager().SetTimer(ClimbTimerHandle, [this, Launch](){this->JumpWall(Launch);}, GetWorld()->DeltaTimeSeconds, true);
@@ -262,6 +260,11 @@ void AMyProject8Character::ResetGlide()
 	bIsEndingGlide = false;
 }
 
+void AMyProject8Character::OnMoveCompleted()
+{
+	this->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	EnableInput(this->GetLocalViewingPlayerController());
+}
 
 
 void AMyProject8Character::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)
@@ -347,7 +350,23 @@ void AMyProject8Character::Move(const FInputActionValue& Value)
 				UpDirection =  FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 			}
 
-			if (ClimbingComponentRef->CanClimbUpOrDown(MovementVector.Y))
+			if (!ClimbingComponentRef->CanClimbUpOrDown(MovementVector.Y) && FMath::Sign(MovementVector.Y) >= 0.0f && ClimbingComponentRef->Climb())
+			{
+				FVector NewLaunchForward = FVector(GetActorLocation() + (GetActorForwardVector() * 50.0f));
+				FVector EndClimbUpDirection = FVector(NewLaunchForward.X,NewLaunchForward.Y,GetActorLocation().Z + 104.0f);
+				FRotator RotatorPlayer = GetActorRotation();
+				
+				FLatentActionInfo LatentInfo;
+				LatentInfo.CallbackTarget = this;
+				LatentInfo.ExecutionFunction = FName("OnMoveCompleted");
+				LatentInfo.Linkage = 0;
+				LatentInfo.UUID = FMath::Rand();
+
+				UKismetSystemLibrary::MoveComponentTo(this->GetCapsuleComponent(), EndClimbUpDirection, RotatorPlayer, true, true, 1.0f, true, EMoveComponentAction::Move, LatentInfo);
+				DisableInput(this->GetLocalViewingPlayerController());
+			}
+
+			else if (ClimbingComponentRef->CanClimbUpOrDown(MovementVector.Y))
 			{
 				AddMovementInput(UpDirection, MovementVector.Y);
 			}

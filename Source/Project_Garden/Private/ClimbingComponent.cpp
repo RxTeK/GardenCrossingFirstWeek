@@ -55,21 +55,17 @@ bool UClimbingComponent::Climb()
 			if (Cast<AClimbingZone>(OutHit.GetActor()))
 			{
 				GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::Green,"True");
-				if (PlayerRef->GetCharacterMovement()->MovementMode != MOVE_Flying)
+				if (PlayerRef->GetCharacterMovement()->MovementMode != MOVE_Flying )
 				{
+					GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Green,"BLALAALAL");
 					PlayerRef->GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 					PlayerRef->GetCharacterMovement()->MaxFlySpeed = MaxClimbSpeed;
 					PlayerRef->GetCharacterMovement()->BrakingDecelerationFlying = MaxClimbSpeed * 10.0f;
 				}
-				if (!PlayerRef->IsJumpOnClimb)
-				{
-					const float ClimbedRotation = UKismetMathLibrary::MakeRotFromX(OutHit.Normal).Yaw + 180.0f;
-					PlayerRef->SetActorRotation(FRotator(PlayerRef->GetActorRotation().Pitch,ClimbedRotation,PlayerRef->GetActorRotation().Roll));
-				}
-				else
-				{
-					PlayerRef->GetCharacterMovement()->BrakingDecelerationFlying = 0.0f;
-				}
+				
+				const float ClimbedRotation = UKismetMathLibrary::MakeRotFromX(OutHit.Normal).Yaw + 180.0f;
+				PlayerRef->SetActorRotation(FRotator(PlayerRef->GetActorRotation().Pitch,ClimbedRotation,PlayerRef->GetActorRotation().Roll));
+				
 				return true;
 			}
 		}
@@ -120,7 +116,7 @@ bool UClimbingComponent::CanClimbUpOrDown(float Direction)
 		FVector EndLocationUp = TracePos + PlayerRef->GetActorUpVector()* (40.0f* FMath::Sign(Direction));
 		FHitResult OutHitForward;
 		FHitResult OutHitUp;
-		DrawDebugLine(GetWorld(), TracePos, EndLocationUp, FColor::Red, false, 0.0f, 0, 1.0f);
+		DrawDebugLine(GetWorld(), TracePos, EndLocationForward, FColor::Yellow, false, 0.0f, 0, 1.0f);
 		if (GetWorld()->LineTraceSingleByChannel(OutHitForward, TracePos, EndLocationForward,ECC_Visibility,CollisionParams))
 		{
 			if (GetWorld()->LineTraceSingleByChannel(OutHitUp, TracePos, EndLocationUp,ECC_Visibility,CollisionParams) && FMath::Sign(Direction) < 0.0f)
@@ -144,6 +140,7 @@ bool UClimbingComponent::CanClimbUpOrDown(float Direction)
 		}
 		
 	}
+	
 	GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::Green,"False");
 	return false;
 }

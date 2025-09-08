@@ -79,9 +79,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Glide")
 	bool bIsEndingGlide;
 
- UFUNCTION()
+	UFUNCTION()
 	void ResetGlide();
 
+	UFUNCTION()
+	void OnMoveCompleted();
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<ASpline> SplineClass;
 	
@@ -145,9 +148,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float LaunchLenght = 500.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float LaunchSpeed = 500.0f;
 	
 	UPROPERTY()
 	bool IsJumpOnClimb = false;

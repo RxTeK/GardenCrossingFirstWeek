@@ -47,6 +47,7 @@ void ASequenceManager::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActo
 
 		FMovieSceneSequencePlaybackSettings Settings; // Paramètres de lecture
 		ALevelSequenceActor* OutActor; // Actor créé pour la séquence
+		Settings.FinishCompletionStateOverride = EMovieSceneCompletionModeOverride::ForceKeepState;
 
 		// Crée le player et l’actor dans le monde
 		ULevelSequencePlayer* SequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(),LevelSequence, Settings, OutActor);

@@ -57,7 +57,6 @@ bool UClimbingComponent::Climb()
 				GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::Green,"True");
 				if (PlayerRef->GetCharacterMovement()->MovementMode != MOVE_Flying )
 				{
-					GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Green,"BLALAALAL");
 					PlayerRef->GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 					PlayerRef->GetCharacterMovement()->MaxFlySpeed = MaxClimbSpeed;
 					PlayerRef->GetCharacterMovement()->BrakingDecelerationFlying = MaxClimbSpeed * 10.0f;

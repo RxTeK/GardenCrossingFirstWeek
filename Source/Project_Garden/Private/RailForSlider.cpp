@@ -60,7 +60,7 @@ void ARailForSlider::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	if (!Player) return;
 
 	PlayerRef = Player;
-	bAttach = true;
+	PlayerRef->bAttach = true;
 
 	// Calculer la distance sur la spline **depuis la position actuelle du joueur**
 	Distance = SplineComponent->GetDistanceAlongSplineAtLocation(PlayerRef->GetActorLocation(),
@@ -135,7 +135,7 @@ void ARailForSlider::BoxMovement(float DeltaTime)
 
 void ARailForSlider::MovementOnSpline()
 {
-	if (bAttach && PlayerRef)
+	if (PlayerRef->bAttach && PlayerRef)
 	{
 		PlayerRef->SetActorLocation(SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World));
 		Distance += Sign * 5.0f;
@@ -166,7 +166,7 @@ void ARailForSlider::DetachPlayer()
 {
 	if (!PlayerRef) return;
 
-	bAttach = false;
+	PlayerRef->bAttach = false;
 	
 	if (PlayerRef->GetCharacterMovement())
 	{
@@ -175,7 +175,4 @@ void ARailForSlider::DetachPlayer()
 	
 	FVector DetachImpulse = PlayerRef->GetActorForwardVector() * 300.0f + FVector(0,0,200.f);
 	PlayerRef->LaunchCharacter(DetachImpulse, true, true);
-
-	PlayerRef = nullptr; // plus de référence, sécurité
 }
-

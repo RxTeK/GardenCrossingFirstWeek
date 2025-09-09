@@ -43,9 +43,6 @@ public:
 	AMyProject8Character* PlayerRef;
 
 	UPROPERTY()
-	bool bAttach = false;
-
-	UPROPERTY()
 	float Distance = 0;
 
 	UPROPERTY()

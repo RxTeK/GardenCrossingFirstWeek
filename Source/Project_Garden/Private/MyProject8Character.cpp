@@ -193,6 +193,10 @@ void AMyProject8Character::newJump()
 			
 		}
 	}
+	if (bAttach == true)
+	{
+		DetachPlayer();
+	}
 	
 }
 
@@ -328,6 +332,17 @@ void AMyProject8Character::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
+}
+
+void AMyProject8Character::DetachPlayer()
+{
+	bAttach = false;
+	if (GetCharacterMovement())
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	}
+	FVector DetachImpulse = GetActorForwardVector() * 300.0f + FVector(0,0,200.f);
+	LaunchCharacter(DetachImpulse, true, true);
 }
 
 void AMyProject8Character::Move(const FInputActionValue& Value)

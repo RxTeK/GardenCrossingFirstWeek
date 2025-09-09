@@ -91,6 +91,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	ASpline* Rope;
 
+	UPROPERTY()
+	bool bAttach = false;
+
+	UFUNCTION()
+	void DetachPlayer();
+
 protected:
 
 	/** Called for movement input */

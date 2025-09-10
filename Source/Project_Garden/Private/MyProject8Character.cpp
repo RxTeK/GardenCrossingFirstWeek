@@ -323,7 +323,7 @@ void AMyProject8Character::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 		if (SlingshotComponentRef)
 		{
-			EnhancedInputComponent->BindAction(SlingshotAction, ETriggerEvent::Started, SlingshotComponentRef, &USlingshotComponent::ShootStart);
+			EnhancedInputComponent->BindAction(SlingshotAction, ETriggerEvent::Triggered, SlingshotComponentRef, &USlingshotComponent::ShootStart);
 			EnhancedInputComponent->BindAction(SlingshotAction, ETriggerEvent::Completed, SlingshotComponentRef, &USlingshotComponent::ShootEnd);
 			EnhancedInputComponent->BindAction(SlingshotAction, ETriggerEvent::Canceled, SlingshotComponentRef, &USlingshotComponent::ShootEnd);
 		}

@@ -7,6 +7,7 @@
 #include "Components/ActorComponent.h"
 #include "SlingshotComponent.generated.h"
 
+class UProjectileActor;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJECT_GARDEN_API USlingshotComponent : public UActorComponent
@@ -23,12 +24,24 @@ public:
 	UFUNCTION()
 	void ShootEnd();
 
+	UPROPERTY(EditDefaultsOnly, Category="Combat")
+	TSubclassOf<class AProjectilActor> ProjectileClass;
+
+	UPROPERTY(EditDefaultsOnly, Category="Combat")
+	float MinimalPower;
+
+	UPROPERTY(EditDefaultsOnly, Category="Combat")
+	float MaximalPower;
+
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	UPROPERTY()
 	AMyProject8Character* PlayerRef;
+	float ChargePower = MinimalPower;
 
+	float TickBase;
+	
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

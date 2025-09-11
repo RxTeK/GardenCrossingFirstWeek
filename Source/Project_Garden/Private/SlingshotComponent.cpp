@@ -4,6 +4,7 @@
 #include "ProjectilActor.h"
 #include "SlingshotComponent.h"
 
+#include "MainWidget.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
@@ -26,7 +27,8 @@ void USlingshotComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	PlayerRef = Cast<AMyProject8Character>(GetOwner());
-	TickBase = 0.01f;
+	TickBase = 0.05f;
+	
 	// ...
 	
 }
@@ -51,6 +53,10 @@ void USlingshotComponent::ShootStart()
 		PlayerRef->SetActorRotation(FRotator(PlayerRef->GetActorRotation().Pitch, CameraRotation.Yaw, PlayerRef->GetActorRotation().Roll));
 		GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Green, Msg);
 		GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::Blue,TEXT("ChargePower"));
+		if (PlayerRef->MainWidgetInstance)
+		{
+			PlayerRef->MainWidgetInstance->StartAiming();
+		}
 	}
 	
 	
@@ -80,6 +86,10 @@ void USlingshotComponent::ShootEnd()
 		{
 			Projectile->MoveProjectile(ChargePower*20.0f,MuzzleRotation);
 		}
+	}
+	if (PlayerRef->MainWidgetInstance)
+	{
+		PlayerRef->MainWidgetInstance->StopAiming();
 	}
 	ChargePower = 100.0f;
 }

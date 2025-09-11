@@ -21,6 +21,7 @@
 #include "Components/SphereComponent.h"
 #include "SlowFallComponent.h"
 #include "Spline.h"
+#include "MainWidget.h"
 #include "SwimComponent.h"
 #include "ClimbingComponent.h"
 #include "FrameTypes.h"
@@ -94,6 +95,15 @@ void AMyProject8Character::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+	if (MainWidget && GetWorld())
+	{
+		MainWidgetInstance = CreateWidget<UMainWidget>(GetWorld(), MainWidget);
+		if (MainWidgetInstance)
+		{
+			MainWidgetInstance->AddToViewport();
+		}
+	}
+	
 }
 
 void AMyProject8Character::Tick(float DeltaTime)

@@ -1,7 +1,22 @@
 #include "MainWidget.h"
 #include "TimerManager.h"
+#include "Components/CanvasPanel.h"
 #include "Engine/World.h"
 #include "GameFramework/PlayerController.h"
+
+
+void UMainWidget::NativeConstruct()
+{
+	Super::NativeConstruct();
+	
+	if (CrosshairImage)
+	{
+		CrosshairImage->SetVisibility(ESlateVisibility::Hidden);
+	}
+	
+}
+
+
 
 void UMainWidget::StartAiming()
 {
@@ -11,6 +26,10 @@ void UMainWidget::StartAiming()
 	if (GetWorld())
 	{
 		GetWorld()->GetTimerManager().SetTimer(AimTimerHandle, this, &UMainWidget::GrowCrosshair, 0.01f, true);
+		if (CrosshairImage)
+		{
+			CrosshairImage->SetVisibility(ESlateVisibility::Visible);
+		}
 	}
 }
 
@@ -22,13 +41,15 @@ void UMainWidget::StopAiming()
 	if (GetWorld())
 	{
 		GetWorld()->GetTimerManager().ClearTimer(AimTimerHandle);
+		if (CrosshairImage)
+		{
+			CrosshairImage->SetVisibility(ESlateVisibility::Hidden);
+		}
 	}
 }
 
 void UMainWidget::GrowCrosshair()
 {
 	UE_LOG(LogTemp, Warning, TEXT("GrowCrosshair tick"));
-
-	// Ici tu peux ajouter ton code pour agrandir la croix de visée
-	// Par exemple modifier un UImage ou une variable float
+	
 }

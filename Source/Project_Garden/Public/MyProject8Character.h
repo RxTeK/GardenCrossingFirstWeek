@@ -22,6 +22,7 @@ class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 class ASpline;
+class UMainWidget;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -87,6 +88,11 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<ASpline> SplineClass;
+
+	
+	
+	UPROPERTY()
+	UMainWidget* MainWidgetInstance;
 	
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
 	ASpline* Rope;
@@ -111,9 +117,9 @@ protected:
 	UFUNCTION()
 	float height(const AGrapPoint* Point);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UMainWidget> MainWidget;
 	
-
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	USphereComponent* Sphere;

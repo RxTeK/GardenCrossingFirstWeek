@@ -2,6 +2,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/CanvasPanel.h"
+#include "Components/Image.h"
 #include "MainWidget.generated.h"
 
 UCLASS()
@@ -17,6 +19,19 @@ public:
 	void StopAiming();
 
 	void GrowCrosshair();
+	
+
+	UPROPERTY(meta = (BindWidget), EditAnywhere, BlueprintReadWrite)
+	UCanvasPanel* RootCanvas;
+
+	// Image enfant
+	UPROPERTY(meta = (BindWidget), EditAnywhere, BlueprintReadWrite)
+	UImage* CrosshairImage;
+
+	
+protected:
+	virtual void NativeConstruct() override;
+
 
 private:
 	FTimerHandle AimTimerHandle;

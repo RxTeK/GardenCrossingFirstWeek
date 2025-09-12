@@ -33,12 +33,22 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Combat")
 	float MaximalPower;
 
+	UPROPERTY(EditDefaultsOnly, Category="Combat")
+	float TargetArmsLenghtForShot;
+
+	
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 	UPROPERTY()
 	AMyProject8Character* PlayerRef;
 	float ChargePower = MinimalPower;
+	float ArmsLenghtBase;
+	bool In;
+	void ArmsForShot(float Lenght);
+
+	FTimerHandle ShotTimer;
+	
 
 	float TickBase;
 	

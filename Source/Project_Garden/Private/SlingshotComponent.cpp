@@ -1,12 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "ProjectilActor.h"
 #include "SlingshotComponent.h"
 
+#include "ProjectilActor.h"
 #include "MainWidget.h"
+#include "MaterialHLSLTree.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 
 
 // Sets default values for this component's properties
@@ -34,6 +35,11 @@ void USlingshotComponent::BeginPlay()
 }
 
 
+void USlingshotComponent::ArmsForShot(float Lenght)
+{
+	PlayerRef->GetCameraBoom()->TargetArmLength = FMath::FInterpTo(PlayerRef->GetCameraBoom()->TargetArmLength,Lenght,GetWorld()->DeltaTimeSeconds,7.0f);
+}
+
 // Called every frame
 void USlingshotComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -46,6 +52,14 @@ void USlingshotComponent::ShootStart()
 {
 	if (PlayerRef)
 	{
+		if (ChargePower == MinimalPower)
+		{
+			GetWorld()->GetTimerManager().ClearTimer(ShotTimer);
+			ArmsLenghtBase = PlayerRef->GetCameraBoom()->TargetArmLength;
+			In = true;
+			PlayerRef->GetWorldTimerManager().SetTimer(ShotTimer, [this](){this->ArmsForShot(TargetArmsLenghtForShot);}, GetWorld()->DeltaTimeSeconds, true);
+		}
+		
 		ChargePower += TickBase * 5.f;
 		ChargePower = FMath::Clamp(ChargePower,MinimalPower,MaximalPower);
 		FString Msg = FString::Printf(TEXT("La valeur est : %f"), ChargePower);
@@ -66,6 +80,8 @@ void USlingshotComponent::ShootEnd()
 {
 	if (ProjectileClass && PlayerRef)
 	{
+		GetWorld()->GetTimerManager().ClearTimer(ShotTimer);
+		PlayerRef->GetWorldTimerManager().SetTimer(ShotTimer, [this](){this->ArmsForShot(ArmsLenghtBase);}, GetWorld()->DeltaTimeSeconds, true);
 		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Blue,"Shoot");
 		FVector MuzzleLocation = PlayerRef->GetActorLocation() + PlayerRef->GetFollowCamera()->GetForwardVector() * 100.f;
 		DrawDebugLine(GetWorld(), PlayerRef->GetActorLocation(), MuzzleLocation, FColor::Red, false, 10.0f, 0, 1.0f);
@@ -91,5 +107,5 @@ void USlingshotComponent::ShootEnd()
 	{
 		PlayerRef->MainWidgetInstance->StopAiming();
 	}
-	ChargePower = 100.0f;
+	ChargePower = MinimalPower;
 }

@@ -98,6 +98,7 @@ void USlingshotComponent::ShootEnd()
 			SpawnParams
 		);
 		
+		
 		if (Projectile != nullptr && Projectile->ProjectileMovement )
 		{
 			Projectile->MoveProjectile(ChargePower*20.0f,MuzzleRotation);

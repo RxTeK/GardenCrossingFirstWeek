@@ -2,7 +2,7 @@
 
 
 #include "ProjectilActor.h"
-
+#include "MyRiddle.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 // Sets default values
@@ -20,14 +20,27 @@ AProjectilActor::AProjectilActor()
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = false;
 	ProjectileMovement->ProjectileGravityScale = 1.5f;
+	ProjectileMovement->bSweepCollision = true;
 
+	
+	BoxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("Box"));
+	BoxComp->SetupAttachment(MeshComp);
+	BoxComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	BoxComp->SetCollisionObjectType(ECC_WorldDynamic);
+	BoxComp->SetCollisionResponseToAllChannels(ECR_Overlap);
+	BoxComp->SetGenerateOverlapEvents(true);
+	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &AProjectilActor::OnComponentOverlap);
+
+
+	
+	
 }
 
 // Called when the game starts or when spawned
 void AProjectilActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 void AProjectilActor::MoveProjectile(float Speed,FRotator Rotation)
@@ -40,6 +53,40 @@ void AProjectilActor::MoveProjectile(float Speed,FRotator Rotation)
 
 	}
 }
+
+void AProjectilActor::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
+	if (MeshComp && BoxComp)
+	{
+		FVector Origin;
+		FVector BoxExtent;
+		MeshComp->GetLocalBounds(Origin, BoxExtent);
+		BoxExtent += FVector(0.5f, 0.5f, 0.5f);
+		BoxComp->SetBoxExtent(BoxExtent);
+	}
+}
+
+
+void AProjectilActor::OnComponentOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor != this->GetOwner() && OtherActor != this)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "ProjectileMovement");
+		if (AMyRiddle* MyRiddle = Cast<AMyRiddle>(OtherActor))
+		{
+			MyRiddle->Touched();
+		}
+		K2_DestroyActor();
+	}
+	else
+	{
+		
+	}
+}
+
 
 // Called every frame
 void AProjectilActor::Tick(float DeltaTime)

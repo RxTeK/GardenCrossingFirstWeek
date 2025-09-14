@@ -93,5 +93,10 @@ void AProjectilActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (this->GetVelocity() == FVector::ZeroVector)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, "Destroyed");
+		K2_DestroyActor();
+	}
 }
 

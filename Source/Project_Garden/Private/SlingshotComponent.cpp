@@ -83,25 +83,20 @@ void USlingshotComponent::ShootEnd()
 		GetWorld()->GetTimerManager().ClearTimer(ShotTimer);
 		PlayerRef->GetWorldTimerManager().SetTimer(ShotTimer, [this](){this->ArmsForShot(ArmsLenghtBase);}, GetWorld()->DeltaTimeSeconds, true);
 		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Blue,"Shoot");
-		FVector MuzzleLocation = PlayerRef->GetActorLocation() + PlayerRef->GetFollowCamera()->GetForwardVector() * 100.f;
-		DrawDebugLine(GetWorld(), PlayerRef->GetActorLocation(), MuzzleLocation, FColor::Red, false, 10.0f, 0, 1.0f);
-		FRotator MuzzleRotation = PlayerRef->GetFollowCamera()->GetComponentRotation();
+		FVector StartLocation = PlayerRef->GetActorLocation() + (PlayerRef->GetFollowCamera()->GetForwardVector() * 100.f) + (PlayerRef->GetActorRightVector() * 50.f);
+		DrawDebugLine(GetWorld(), PlayerRef->GetActorLocation(), StartLocation, FColor::Red, false, 10.0f, 0, 1.0f);
+		FRotator ProjectilRotation = PlayerRef->GetFollowCamera()->GetComponentRotation();
 
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 		SpawnParams.Owner = PlayerRef;
 
-		AProjectilActor* Projectile = GetWorld()->SpawnActor<AProjectilActor>(
-			ProjectileClass,
-			MuzzleLocation,
-			MuzzleRotation,
-			SpawnParams
-		);
+		AProjectilActor* Projectile = GetWorld()->SpawnActor<AProjectilActor>(ProjectileClass,StartLocation,ProjectilRotation,SpawnParams);
 		
 		
 		if (Projectile != nullptr && Projectile->ProjectileMovement )
 		{
-			Projectile->MoveProjectile(ChargePower*20.0f,MuzzleRotation);
+			Projectile->MoveProjectile(ChargePower*20.0f,ProjectilRotation);
 		}
 	}
 	if (PlayerRef->MainWidgetInstance)

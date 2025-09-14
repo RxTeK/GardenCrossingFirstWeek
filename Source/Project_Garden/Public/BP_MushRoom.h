@@ -19,6 +19,9 @@ public:
 	ABP_MushRoom();
 	float randomNumber();
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float m_MushroomPower;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

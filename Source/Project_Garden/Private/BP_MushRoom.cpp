@@ -72,6 +72,6 @@ void ABP_MushRoom::OnComponentOverlap(UPrimitiveComponent* OverlappedComp, AActo
         {
             comp->GravityClassic();
         }
-        Chararef->LaunchCharacter(Chararef->GetActorUpVector()*1000.0f, true, true);
+        Chararef->LaunchCharacter(Chararef->GetActorUpVector()*m_MushroomPower, true, true);
     }
 }

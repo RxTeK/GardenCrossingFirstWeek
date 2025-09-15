@@ -5,6 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Character.h"
 #include "Engine/World.h"
+#include "Kismet/KismetMathLibrary.h"
 
 ARailForSlider::ARailForSlider()
 {
@@ -135,20 +136,8 @@ void ARailForSlider::BoxMovement(float DeltaTime)
 
 void ARailForSlider::MovementOnSpline()
 {
-	if (PlayerRef->bAttach && PlayerRef)
+	if (!PlayerRef->bAttach && PlayerRef)
 	{
-		PlayerRef->SetActorLocation(SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World));
-		Distance += Sign * 5.0f;
-
-		// Vérifier si on est au bout de la spline
-		if (Distance >= SplineComponent->GetSplineLength() || Distance <= 0.0f)
-		{
-			DetachPlayer();
-		}
-	}
-	else if (PlayerRef)
-	{
-	
 		Distance = SplineComponent->GetDistanceAlongSplineAtLocation(BoxComponent->GetComponentLocation(), ESplineCoordinateSpace::World);
 		FVector PlayerForward = PlayerRef->GetActorForwardVector();
 		FVector SplinePos = SplineComponent->GetLocationAtDistanceAlongSpline(Distance + 1, ESplineCoordinateSpace::World) -
@@ -159,6 +148,20 @@ void ARailForSlider::MovementOnSpline()
 		Dot = (Dot > 0) ? Dot + 1.0f : Dot - 1.0f;
 
 		Sign = (Distance >= SplineComponent->GetSplineLength()) ? -1 : Dot;
+	}
+	else if (PlayerRef)
+	{
+		FVector VectorPlayer = SplineComponent->GetLocationAtDistanceAlongSpline(Distance + Sign, ESplineCoordinateSpace::World) -SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);
+		FRotator RotatorPlayer = UKismetMathLibrary::MakeRotFromX(VectorPlayer);
+		PlayerRef->SetActorLocation(SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World) + FVector (0,0,70));
+		PlayerRef->SetActorRotation(RotatorPlayer);
+		Distance += Sign * 5.0f;
+
+		// Vérifier si on est au bout de la spline
+		if (Distance >= SplineComponent->GetSplineLength() || Distance <= 0.0f)
+		{
+			DetachPlayer();
+		}
 	}
 }
 
@@ -173,6 +176,6 @@ void ARailForSlider::DetachPlayer()
 		PlayerRef->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	}
 	
-	FVector DetachImpulse = PlayerRef->GetActorForwardVector() * 300.0f + FVector(0,0,200.f);
+	FVector DetachImpulse = PlayerRef->GetActorForwardVector() * 1500.0f + FVector(0,0,1000.f);
 	PlayerRef->LaunchCharacter(DetachImpulse, true, true);
 }

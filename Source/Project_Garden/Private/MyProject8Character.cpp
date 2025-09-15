@@ -181,7 +181,10 @@ void AMyProject8Character::newJump()
 
 	bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params);
 	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 2.0f, 0, 2.0f);
-
+	if (bAttach == true)
+	{
+		DetachPlayer();
+	}
 	if (bCanJump)
 	{
 		LaunchCharacter(LaunchVelocity, false, false);
@@ -203,10 +206,7 @@ void AMyProject8Character::newJump()
 			
 		}
 	}
-	if (bAttach == true)
-	{
-		DetachPlayer();
-	}
+	
 	
 }
 
@@ -244,7 +244,7 @@ void AMyProject8Character::newStopJumping()
 
 void AMyProject8Character::Plane()
 {
-	if (GetCharacterMovement()->IsFalling() && !ClimbingComponentRef->Climb() && !SwimComponentRef->Grabbed)
+	if (GetCharacterMovement()->IsFalling() && !ClimbingComponentRef->Climb() && !SwimComponentRef->Grabbed && !bAttach)
 	{
 		if(!bHit)
 		{

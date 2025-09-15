@@ -29,6 +29,7 @@ void USlingshotComponent::BeginPlay()
 	Super::BeginPlay();
 	PlayerRef = Cast<AMyProject8Character>(GetOwner());
 	TickBase = 0.05f;
+	ArmsLenghtBase = PlayerRef->GetCameraBoom()->TargetArmLength;
 	
 	// ...
 	
@@ -55,7 +56,6 @@ void USlingshotComponent::ShootStart()
 		if (ChargePower == MinimalPower)
 		{
 			GetWorld()->GetTimerManager().ClearTimer(ShotTimer);
-			ArmsLenghtBase = PlayerRef->GetCameraBoom()->TargetArmLength;
 			In = true;
 			PlayerRef->GetWorldTimerManager().SetTimer(ShotTimer, [this](){this->ArmsForShot(TargetArmsLenghtForShot);}, GetWorld()->DeltaTimeSeconds, true);
 		}

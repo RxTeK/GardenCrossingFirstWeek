@@ -86,16 +86,10 @@ public:
 	UFUNCTION()
 	void OnMoveCompleted();
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<ASpline> SplineClass;
-
-	
-	
 	UPROPERTY()
 	UMainWidget* MainWidgetInstance;
 	
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	ASpline* Rope;
+
 
 	UPROPERTY()
 	bool bAttach = false;
@@ -110,9 +104,6 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-
-	UFUNCTION()
-	void Interaction();
 
 	UFUNCTION()
 	float height(const AGrapPoint* Point);

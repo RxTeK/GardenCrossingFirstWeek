@@ -244,6 +244,10 @@ void AMyProject8Character::newStopJumping()
 
 void AMyProject8Character::Plane()
 {
+	if (bHasGlided)
+	{
+		return;
+	}
 	if (GetCharacterMovement()->IsFalling() && !ClimbingComponentRef->Climb() && !SwimComponentRef->Grabbed && !bAttach)
 	{
 		if(!bHit)
@@ -254,6 +258,7 @@ void AMyProject8Character::Plane()
 				bIsStartingGlide = true;
 				bIsGliding = true;
 				bIsEndingGlide = false;
+				bHasGlided = true;
 			}
 		}
 	}
@@ -285,9 +290,9 @@ void AMyProject8Character::OnMovementModeChanged(EMovementMode PrevMovementMode,
 {
 	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
 
-	if (GetCharacterMovement()->MovementMode != MOVE_Falling)
+	if (GetCharacterMovement()->MovementMode == MOVE_Walking)
 	{
-		
+		bHasGlided = false;
 	}
 	
 }

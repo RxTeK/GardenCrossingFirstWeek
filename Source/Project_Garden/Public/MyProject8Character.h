@@ -217,5 +217,8 @@ private:
 
 	UFUNCTION()
 	void OnMovementFinish();
+
+	UPROPERTY()
+	bool bHasGlided = false;
 };
 

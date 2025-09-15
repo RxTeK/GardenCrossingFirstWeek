@@ -2,8 +2,6 @@
 
 
 #include "CameraSpline.h"
-
-#include "BlueprintEditor.h"
 #include "InterfaceCamera.h"
 #include "Components/SplineComponent.h"
 #include "Components/BoxComponent.h"

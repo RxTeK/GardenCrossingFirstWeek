@@ -3,15 +3,12 @@
 
 #include "cppCameraComponent.h"
 
-#include "LandscapeRender.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "MaterialHLSLTree.h"
 #include "TimerManager.h"
 #include "Engine/World.h"
 #include "MyProject8Character.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Elements/Framework/TypedElementQueryBuilder.h"
 #include "GameFramework/SpringArmComponent.h"
 
 // Sets default values for this component's properties

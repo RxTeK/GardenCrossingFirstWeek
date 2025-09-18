@@ -88,8 +88,9 @@ public:
 	
 	UPROPERTY()
 	UMainWidget* MainWidgetInstance;
-	
 
+	UPROPERTY()
+	bool BlockCam;
 
 	UPROPERTY()
 	bool bAttach = false;

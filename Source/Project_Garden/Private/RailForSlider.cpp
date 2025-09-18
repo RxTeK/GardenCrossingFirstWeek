@@ -108,6 +108,7 @@ void ARailForSlider::GenerateMeshes()
 		const FVector EndTangent = SplineComponent->GetTangentAtDistanceAlongSpline(Distancer, ESplineCoordinateSpace::Local);
 
 		USplineMeshComponent* SplineMesh = NewObject<USplineMeshComponent>(this);
+		SplineMesh->SetCollisionResponseToAllChannels(ECR_Block);
 		if (SplineMesh)
 		{
 			SplineMesh->RegisterComponent();
@@ -155,9 +156,8 @@ void ARailForSlider::MovementOnSpline()
 		FRotator RotatorPlayer = UKismetMathLibrary::MakeRotFromX(VectorPlayer);
 		PlayerRef->SetActorLocation(SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World) + FVector (0,0,70));
 		PlayerRef->SetActorRotation(RotatorPlayer);
-		Distance += Sign * 5.0f;
-
-		// Vérifier si on est au bout de la spline
+		Distance += Sign * 10.0f;
+		
 		if (Distance >= SplineComponent->GetSplineLength() || Distance <= 0.0f)
 		{
 			DetachPlayer();

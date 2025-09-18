@@ -46,7 +46,7 @@ private:
 	void RotationToTarget();
 
 	UPROPERTY()
-	FVector Postition000 = FVector(0, 0, 0);
+	FVector Postition000 = FVector(0, 50, 30);
 
 	UPROPERTY()
 	FTimerHandle EndTimerHandle;

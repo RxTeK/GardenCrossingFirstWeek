@@ -181,7 +181,7 @@ void AMyProject8Character::newJump()
 
 	bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params);
 	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 2.0f, 0, 2.0f);
-	if (bAttach == true)
+	if (bAttach)
 	{
 		DetachPlayer();
 	}
@@ -297,8 +297,7 @@ void AMyProject8Character::OnMovementModeChanged(EMovementMode PrevMovementMode,
 	
 }
 
-//////////////////////////////////////////////////////////////////////////
-// Input
+//////////////////////////////////////////////////////////////////////////// Input
 
 void AMyProject8Character::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -356,7 +355,7 @@ void AMyProject8Character::DetachPlayer()
 	{
 		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	}
-	FVector DetachImpulse = GetActorForwardVector() * 300.0f + FVector(0,0,200.f);
+	FVector DetachImpulse = GetActorForwardVector() * 1500.0f + FVector(0,0,1000.f);
 	LaunchCharacter(DetachImpulse, true, true);
 }
 
@@ -409,7 +408,7 @@ void AMyProject8Character::Move(const FInputActionValue& Value)
 		else
 		{
 			// find out which way is forward
-			const FRotator Rotation = Controller->GetControlRotation();
+			const FRotator Rotation = GetFollowCamera()->GetComponentRotation();
 			const FRotator YawRotation(0, Rotation.Yaw, 0);
 			// get forward vector
 			const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
@@ -428,7 +427,7 @@ void AMyProject8Character::Look(const FInputActionValue& Value)
 	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
+	if (Controller != nullptr && !BlockCam)
 	{
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);

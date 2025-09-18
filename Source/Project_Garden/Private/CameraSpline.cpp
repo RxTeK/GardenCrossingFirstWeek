@@ -64,6 +64,7 @@ void ACameraSpline::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
 				{
 					UE_LOG(LogTemp, Warning, TEXT("OVERLAP via component"));
 					InterfaceCam->AddSpline(PlayerFocus, Target, Spline);
+					Player->BlockCam = true;
 					break;
 				}
 			}
@@ -91,6 +92,7 @@ void ACameraSpline::EndOverlap( UPrimitiveComponent* OverlappedComponent,AActor*
 					{
 						UE_LOG(LogTemp, Warning, TEXT("OVERLAP END"));
 						InterfaceCam->RemoveSpline();
+						Player->BlockCam = false;
 						break;
 					}
 				}

@@ -23,7 +23,7 @@ void UBP_CameraComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (!CharaRef || !CharaRef->GetCameraBoom()) // Vérifie si CharaRef est valide
+	if (!CharaRef || !CharaRef->GetCameraBoom())
 	{
 		return;
 	}

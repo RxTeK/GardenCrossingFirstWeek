@@ -9,16 +9,17 @@ ABallActor::ABallActor()
 	RootComponent = BallMesh;
 
 	// Activer la physique
-	BallMesh->SetSimulatePhysics(true);
-	BallMesh->SetEnableGravity(true);
-	BallMesh->SetLinearDamping(0.5f);   // ralentit la boule
-	BallMesh->SetAngularDamping(0.8f);  // évite qu’elle roule à l’infini
-	BallMesh->SetMassOverrideInKg(NAME_None, 100.f); // boule lourde
+	// boule lourde
 }
 
 void ABallActor::BeginPlay()
 {
 	Super::BeginPlay();
+	BallMesh->SetSimulatePhysics(true);
+	BallMesh->SetEnableGravity(true);
+	BallMesh->SetLinearDamping(0.5f);   // ralentit la boule
+	BallMesh->SetAngularDamping(0.8f);  // évite qu’elle roule à l’infini
+	BallMesh->SetMassOverrideInKg(NAME_None, 100.f); 
 }
 
 void ABallActor::Tick(float DeltaTime)

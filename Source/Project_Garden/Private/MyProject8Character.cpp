@@ -2,7 +2,6 @@
 
 #include "MyProject8Character.h"
 
-#include <string>
 
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
@@ -20,14 +19,10 @@
 #include "VectorTypes.h"
 #include "Components/SphereComponent.h"
 #include "SlowFallComponent.h"
-#include "Spline.h"
 #include "MainWidget.h"
 #include "SwimComponent.h"
 #include "ClimbingComponent.h"
-#include "FrameTypes.h"
 #include "SlingshotComponent.h"
-#include "DataWrappers/ChaosVDQueryDataWrappers.h"
-#include "DSP/SpectrumAnalyzer.h"
 #include "Kismet/KismetMathLibrary.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);

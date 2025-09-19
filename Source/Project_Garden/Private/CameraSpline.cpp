@@ -12,6 +12,7 @@
 #include "InterfaceCamera.h"
 #include "Kismet/GameplayStatics.h"
 #include "MyProject8Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ACameraSpline::ACameraSpline()
@@ -63,6 +64,7 @@ void ACameraSpline::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
 				if (InterfaceCam)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("OVERLAP via component"));
+					Player->GetCharacterMovement()->DisableMovement();
 					InterfaceCam->AddSpline(PlayerFocus, Target, Spline);
 					Player->BlockCam = true;
 					break;

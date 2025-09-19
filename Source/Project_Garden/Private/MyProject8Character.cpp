@@ -254,7 +254,6 @@ void AMyProject8Character::Plane()
 				bIsStartingGlide = true;
 				bIsGliding = true;
 				bIsEndingGlide = false;
-				bHasGlided = true;
 			}
 		}
 	}
@@ -264,6 +263,10 @@ void AMyProject8Character::OnMovementFinish()
 {
 	MovementVector.X = 0.0f;
 	MovementVector.Y = 0.0f;
+	if(BlockCam)
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	}
 }
 
 
@@ -288,7 +291,7 @@ void AMyProject8Character::OnMovementModeChanged(EMovementMode PrevMovementMode,
 
 	if (GetCharacterMovement()->MovementMode == MOVE_Walking)
 	{
-		bHasGlided = false;
+		SlowFallComponent->NewGravity = SlowFallComponent->GravityScaleGlide;
 	}
 	
 }

@@ -59,7 +59,12 @@ public:
 	float GlideDeteriorationRate = 1.0f;
 
 	UPROPERTY()
+<<<<<<< Updated upstream
 	bool AlreadyPlane;
+=======
+	float NewGravity;
+
+>>>>>>> Stashed changes
 	
 private:
 	UPROPERTY()
@@ -75,4 +80,7 @@ private:
 
 	UFUNCTION()
 	void DestroyGlider();
+
+	UPROPERTY()
+	float GravityTemp;
 };

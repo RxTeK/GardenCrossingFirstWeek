@@ -12,6 +12,7 @@ USlowFallComponent::USlowFallComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+	NewGravity = GravityScaleGlide;
 
 	// ...
 }
@@ -51,7 +52,7 @@ void USlowFallComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		
 		float DeteriorationFactor = FMath::Clamp(GlideTimer / MaxGlideTime, 0.0f, 1.0f);
 		
-		float NewGravity = FMath::Lerp(GravityScaleGlide, GravityScaleClassic, DeteriorationFactor);
+		NewGravity = FMath::Lerp(GravityTemp, GravityScaleClassic, DeteriorationFactor);
 		CharaRef->GetCharacterMovement()->GravityScale = NewGravity;
 		
 		if (GlideTimer >= MaxGlideTime)
@@ -60,6 +61,7 @@ void USlowFallComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 			DestroyGlider();
 		}
 	}
+	UE_LOG(LogTemp, Warning, TEXT("float: %f"), NewGravity);
 }
 
 void USlowFallComponent::SlowFallOn()
@@ -78,12 +80,11 @@ void USlowFallComponent::SlowFallOn()
 
 		if (Plane && !StopPlane)
 		{
+			GravityTemp = NewGravity;
 			Plane = false;
 			CharaRef->GetCharacterMovement()->Velocity.Z = 0;
-			CharaRef->GetCharacterMovement()->GravityScale = GravityScaleGlide;
 			CharaRef->GetCharacterMovement()->AirControl = AirControlGlide;
 			GlideTimer = 0.0f;
-			
 			SpawnAndAttachGlider();
 		}
 		else

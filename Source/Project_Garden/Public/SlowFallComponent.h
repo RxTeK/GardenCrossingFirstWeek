@@ -60,7 +60,12 @@ public:
 
 	UPROPERTY()
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 	bool AlreadyPlane;
+=======
+	float NewGravity;
+
+>>>>>>> Stashed changes
 =======
 	float NewGravity;
 

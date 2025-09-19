@@ -57,13 +57,15 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "Glider")
 	float GlideDeteriorationRate = 1.0f;
+
+	UPROPERTY()
+	bool AlreadyPlane;
 	
 private:
 	UPROPERTY()
 	TObjectPtr<AMyProject8Character> CharaRef;
 
-	UPROPERTY()
-	bool AlreadyPlane;
+	
 
 	UPROPERTY()
 	float GlideTimer = 0.0f;

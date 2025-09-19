@@ -155,6 +155,9 @@ public:
 	
 	UPROPERTY()
 	bool IsJumpOnClimb = false;
+
+	UPROPERTY(BlueprintReadWrite,EditAnywhere)
+	float SpeedJumpOnWall = 5;
 	
 private:
 

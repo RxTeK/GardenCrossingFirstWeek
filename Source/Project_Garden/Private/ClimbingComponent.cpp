@@ -62,13 +62,14 @@ bool UClimbingComponent::Climb()
 					PlayerRef->GetCharacterMovement()->BrakingDecelerationFlying = MaxClimbSpeed * 10.0f;
 				}
 				
+				PlayerRef->GetCharacterMovement()->bOrientRotationToMovement = false;
 				const float ClimbedRotation = UKismetMathLibrary::MakeRotFromX(OutHit.Normal).Yaw + 180.0f;
 				PlayerRef->SetActorRotation(FRotator(PlayerRef->GetActorRotation().Pitch,ClimbedRotation,PlayerRef->GetActorRotation().Roll));
 				
 				return true;
 			}
 		}
-		if (PlayerRef->GetCharacterMovement()->MovementMode == MOVE_Flying)
+		if (PlayerRef->GetCharacterMovement()->MovementMode == MOVE_Flying && PlayerRef->bAttached)
 		{
 			PlayerRef->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 			PlayerRef->GetCharacterMovement()->MaxFlySpeed = 500.0f;
@@ -76,6 +77,7 @@ bool UClimbingComponent::Climb()
 		}
 	}
 	GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::Green,"False");
+	PlayerRef->GetCharacterMovement()->bOrientRotationToMovement = true;
 	return false;
 }
 

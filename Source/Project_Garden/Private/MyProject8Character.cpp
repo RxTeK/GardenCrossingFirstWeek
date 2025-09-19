@@ -106,7 +106,7 @@ void AMyProject8Character::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (!bAttached)
 	{
-		if (GrapPoints.size() > 0)
+		if (GrapPoints.size() > 0 && !SlowFallComponent->AlreadyPlane)
 		{
 			BestGrapPoint = GrapPoints[0];
 			for (AGrapPoint* GrapPoint : GrapPoints)
@@ -127,10 +127,13 @@ void AMyProject8Character::Tick(float DeltaTime)
 				BestGrapPoint->CanGrap(true);
 			}
 		}
+		
 		else if (BestGrapPoint != nullptr)
 		{
+			BestGrapPoint->CanGrap(false);
 			BestGrapPoint = nullptr;
 		}
+		
 	}
 	else if (std::ranges::find(GrapPoints, BestGrapPoint) == GrapPoints.end())
 	{
@@ -195,7 +198,6 @@ void AMyProject8Character::newJump()
 			DrawDebugLine(GetWorld(), GetActorLocation(), Launch, FColor::Blue, false, 10.0f, 0, 1.0f);
 			PositionPlayerForLerp = GetActorLocation();
 			LerpAlpha = 0.f;
-			SetActorRotation(FRotator(UKismetMathLibrary::MakeRotFromX(End)));
 			GetWorldTimerManager().ClearTimer(ClimbTimerHandle);
 			GetWorldTimerManager().SetTimer(ClimbTimerHandle, [this, Launch](){this->JumpWall(Launch);}, GetWorld()->DeltaTimeSeconds, true);
 			
@@ -207,12 +209,11 @@ void AMyProject8Character::newJump()
 
 void AMyProject8Character::JumpWall(FVector End)
 {
-	LerpAlpha += GetWorld()->DeltaTimeSeconds;
+	LerpAlpha += GetWorld()->DeltaTimeSeconds * SpeedJumpOnWall;
 	FVector NewLocation = FMath::Lerp(PositionPlayerForLerp, End, LerpAlpha);
 	SetActorLocation(NewLocation);
-	if (LerpAlpha >= 0.1f)
+	if (LerpAlpha >= 1.f)
 	{
-		SetActorLocation(End);
 		this->GetCharacterMovement()->GravityScale = Gravity;
 		IsJumpOnClimb = false;
 		ClimbingComponentRef->Climb();
@@ -390,12 +391,12 @@ void AMyProject8Character::Move(const FInputActionValue& Value)
 				DisableInput(this->GetLocalViewingPlayerController());
 			}
 
-			else if (ClimbingComponentRef->CanClimbUpOrDown(MovementVector.Y))
+			else if (ClimbingComponentRef->CanClimbUpOrDown(MovementVector.Y) && !IsJumpOnClimb)
 			{
 				AddMovementInput(UpDirection, MovementVector.Y);
 			}
 
-			if (ClimbingComponentRef->CanClimbLeftOrRight(MovementVector.X))
+			if (ClimbingComponentRef->CanClimbLeftOrRight(MovementVector.X) && !IsJumpOnClimb)
 			{
 				AddMovementInput(RightDirection, MovementVector.X);
 			}

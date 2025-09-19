@@ -51,6 +51,4 @@ void AGrapPoint::CanGrap(bool Grap)
 	{
 		Widget->SetVisibility(Grap);
 	}
-	
-
 }

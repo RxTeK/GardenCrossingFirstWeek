@@ -59,18 +59,8 @@ public:
 	float GlideDeteriorationRate = 1.0f;
 
 	UPROPERTY()
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 	bool AlreadyPlane;
-=======
 	float NewGravity;
-
->>>>>>> Stashed changes
-=======
-	float NewGravity;
-
->>>>>>> Stashed changes
-	
 private:
 	UPROPERTY()
 	TObjectPtr<AMyProject8Character> CharaRef;

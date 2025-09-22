@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+	// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "MyProject8Character.h"
 
@@ -106,31 +106,34 @@ void AMyProject8Character::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (!bAttached)
 	{
-		if (GrapPoints.size() > 0 && !SlowFallComponent->AlreadyPlane)
+		if (GrapPoints.size() > 0 )
 		{
 			BestGrapPoint = GrapPoints[0];
 			for (AGrapPoint* GrapPoint : GrapPoints)
 			{
-				GrapPoint->CanGrap(false);
 				if (height(BestGrapPoint) > height(GrapPoint))
 				{
 					BestGrapPoint = GrapPoint;
+					GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::Red, "BestGrapPoint");
 				}
 			}
-			if (height(BestGrapPoint) >= 100.0f)
+			if (height(BestGrapPoint) >= 100.0f || SlowFallComponent->AlreadyPlane)
 			{
 				bAttached = false;
+				BestGrapPoint->CanGrap(true, SwimComponentRef->CantGrabImage);
 				BestGrapPoint = nullptr;
 			}
+			
 			else
 			{
-				BestGrapPoint->CanGrap(true);
+				BestGrapPoint->CanGrap(true, SwimComponentRef->GrabbedImage);
+
 			}
 		}
 		
 		else if (BestGrapPoint != nullptr)
 		{
-			BestGrapPoint->CanGrap(false);
+			BestGrapPoint->CanGrap(false, SwimComponentRef->CantGrabImage);
 			BestGrapPoint = nullptr;
 		}
 		
@@ -158,7 +161,7 @@ void AMyProject8Character::OnComponentEndOverlap(UPrimitiveComponent* Overlapped
 	if (AGrapPoint* NewPoint = Cast<AGrapPoint>(OtherActor))
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Grap Points None!"));
-		NewPoint->CanGrap(false);
+		NewPoint->CanGrap(false, SwimComponentRef->CantGrabImage);
 		if (std::ranges::find(GrapPoints, NewPoint) != GrapPoints.end())
 		{
 			GrapPoints.erase(std::ranges::find(GrapPoints, NewPoint));

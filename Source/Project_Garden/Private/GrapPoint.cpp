@@ -7,6 +7,7 @@
 #include "Engine/World.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
+#include "GrapPointWidget.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -33,6 +34,17 @@ void AGrapPoint::BeginPlay()
 {
 	Super::BeginPlay();
 	Widget->SetVisibility(false);
+	if (Widget)
+	{
+		if (UUserWidget* UserWidget = Widget->GetUserWidgetObject())
+		{
+			GrapPointWidget = Cast<UGrapPointWidget>(UserWidget);
+			if (GrapPointWidget)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, "GrapPointWidget");
+			}
+		}
+	}
 }
 
 // Called every frame
@@ -42,13 +54,24 @@ void AGrapPoint::Tick(float DeltaTime)
 	if (GetWorld()->GetFirstPlayerController()->GetPawn() != nullptr)
 	{
 		Arrow->SetWorldRotation(UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation()));
+		
 	}
 }
 
-void AGrapPoint::CanGrap(bool Grap)
+void AGrapPoint::CanGrap(bool Grap, FSlateBrush GrappImage)
 {
 	if (Widget != nullptr)
 	{
 		Widget->SetVisibility(Grap);
+		if (GrapPointWidget != nullptr && GrapPointWidget->GrapPointImage != nullptr)
+		{
+			GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::Red,"Grap Point Widget True");
+			GrapPointWidget->GrapPointImage->SetBrush(GrappImage);
+		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::Red,"Grap Point Widget False");
+
+		} 
 	}
 }

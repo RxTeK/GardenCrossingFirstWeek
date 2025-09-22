@@ -34,6 +34,13 @@ public:
 	float GravityScaleBase;
 	bool PickA;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	FSlateBrush GrabbedImage;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	FSlateBrush CantGrabImage;
+
+	
 	void CalculateSwingForce();
 	bool IsMovingOnGround();
 	

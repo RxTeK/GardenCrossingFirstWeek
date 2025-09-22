@@ -157,6 +157,7 @@ void ARailForSlider::MovementOnSpline()
 		PlayerRef->SetActorLocation(SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World) + FVector (0,0,70));
 		PlayerRef->SetActorRotation(RotatorPlayer);
 		Distance += Sign * 10.0f;
+		PlayerRef->SpeedEffectOn();
 		
 		if (Distance >= SplineComponent->GetSplineLength() || Distance <= 0.0f)
 		{
@@ -178,4 +179,5 @@ void ARailForSlider::DetachPlayer()
 	
 	FVector DetachImpulse = PlayerRef->GetActorForwardVector() * 1500.0f + FVector(0,0,1000.f);
 	PlayerRef->LaunchCharacter(DetachImpulse, true, true);
+	PlayerRef->SpeedEffectOff();
 }

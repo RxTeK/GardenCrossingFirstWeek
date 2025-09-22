@@ -140,7 +140,8 @@ void AMyProject8Character::Tick(float DeltaTime)
 		BestGrapPoint = nullptr;
 		bAttached = false;
 	}
-	
+	UE_LOG(LogTemp, Warning, TEXT("FOV actuel = %f"), GetFollowCamera()->FieldOfView);
+
 }
 
 void AMyProject8Character::OnComponentOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -172,14 +173,14 @@ void AMyProject8Character::newJump()
 	bCanJump = false;
 
 	FVector Start = GetActorLocation();
-	FVector End = Start - FVector(0.0f, 0.0f, 200.0f);
+	FVector End = Start - FVector(0.0f, 0.0f, 100.0f);
 	FHitResult HitResult;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 
 	float Radius = 26.f;
 	bHit = GetWorld()->SweepSingleByChannel(HitResult,Start,End,FQuat::Identity,ECC_Visibility,FCollisionShape::MakeSphere(Radius),Params);
-	DrawDebugSweptSphere(GetWorld(), Start, End, Radius, FColor::Green, false, 10.0f, 1);
+	DrawDebugSweptSphere(GetWorld(), Start, End, Radius, FColor::Green, false, 10.0f, 10);
 	if (bAttach)
 	{
 		DetachPlayer();
@@ -270,6 +271,21 @@ void AMyProject8Character::OnMovementFinish()
 	}
 }
 
+void AMyProject8Character::SpeedEffectOn()
+{
+	float StartFOV = GetFollowCamera()->FieldOfView;
+	float EndFOV = 120.0f;
+	GetFollowCamera()->FieldOfView = (FMath::FInterpTo(StartFOV, EndFOV, GetWorld()->GetDeltaSeconds(), 10.0f));
+}
+
+void AMyProject8Character::SpeedEffectOff()
+{
+	float StartFOV = GetFollowCamera()->FieldOfView;
+	float EndFOV = 90.0f;
+	GetFollowCamera()->FieldOfView = (FMath::FInterpTo(StartFOV, EndFOV, GetWorld()->GetDeltaSeconds(), 100));
+}
+
+
 
 void AMyProject8Character::ResetGlide()
 {
@@ -357,6 +373,7 @@ void AMyProject8Character::DetachPlayer()
 	}
 	FVector DetachImpulse = GetActorForwardVector() * 1500.0f + FVector(0,0,1000.f);
 	LaunchCharacter(DetachImpulse, true, true);
+	SpeedEffectOff();
 }
 
 void AMyProject8Character::Move(const FInputActionValue& Value)

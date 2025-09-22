@@ -158,6 +158,13 @@ public:
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	float SpeedJumpOnWall = 5;
+
+	UFUNCTION()
+	void SpeedEffectOn();
+	
+	UFUNCTION()
+	void SpeedEffectOff();
+
 	
 private:
 

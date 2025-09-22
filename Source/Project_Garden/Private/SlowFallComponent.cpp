@@ -61,7 +61,6 @@ void USlowFallComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 			DestroyGlider();
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("float: %f"), NewGravity);
 }
 
 void USlowFallComponent::SlowFallOn()

@@ -49,7 +49,7 @@ void ABP_MushRoom::Tick(float DeltaTime)
 }
 
 void ABP_MushRoom::OnComponentOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{w
+{
     AMyProject8Character* Chararef = Cast<AMyProject8Character>(OtherActor);
     if (Chararef)
     {

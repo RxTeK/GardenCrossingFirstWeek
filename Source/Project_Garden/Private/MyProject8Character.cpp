@@ -177,8 +177,9 @@ void AMyProject8Character::newJump()
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 
-	bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params);
-	DrawDebugLine(GetWorld(), Start, End, FColor::Green, false, 2.0f, 0, 2.0f);
+	float Radius = 26.f;
+	bHit = GetWorld()->SweepSingleByChannel(HitResult,Start,End,FQuat::Identity,ECC_Visibility,FCollisionShape::MakeSphere(Radius),Params);
+	DrawDebugSweptSphere(GetWorld(), Start, End, Radius, FColor::Green, false, 10.0f, 1);
 	if (bAttach)
 	{
 		DetachPlayer();

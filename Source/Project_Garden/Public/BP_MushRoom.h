@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/ArrowComponent.h"
 #include "Materials/Material.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
@@ -20,7 +21,7 @@ public:
 	float randomNumber();
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	float m_MushroomPower;
+	float m_MushroomPower = 1000.0f;
 
 protected:
 	// Called when the game starts or when spawned
@@ -32,6 +33,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	UStaticMeshComponent* Mesh;
+
+	UPROPERTY(VisibleAnywhere)
+	UArrowComponent* Arrow;
 
 	UPROPERTY(VisibleAnywhere)
 	UMaterial* Material;

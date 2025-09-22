@@ -12,7 +12,9 @@ ABP_MushRoom::ABP_MushRoom()
     // Create and configure the Mesh component
     Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
     SetRootComponent(Mesh);
-
+    
+    Arrow = CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow"));
+    Arrow->SetupAttachment(Mesh);
     // Create and configure the BoxComponent
     Collider = CreateDefaultSubobject<UBoxComponent>(TEXT("Collider"));
     Collider->InitBoxExtent(FVector(100.f, 100.f, 100.f)); // Dimensions de la boîte
@@ -47,31 +49,14 @@ void ABP_MushRoom::Tick(float DeltaTime)
 }
 
 void ABP_MushRoom::OnComponentOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-    GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, TEXT("Collision détectée !"));
-
-    if (Mesh && Mesh->GetMaterial(0))
-    {
-        FName name = FName("Base Color");
-        FVector color = FVector(randomNumber(), randomNumber(), randomNumber());
-        Mesh->SetVectorParameterValueOnMaterials(name, color);
-        UE_LOG(LogTemp, Display, TEXT("Random Color"));
-    }
-    
+{w
     AMyProject8Character* Chararef = Cast<AMyProject8Character>(OtherActor);
     if (Chararef)
     {
-        
-        // UFunction* SlowFallFuncClassic = Chararef->SlowFallComponent->FindFunction(FName("GravityClassic"));
-        // if (SlowFallFuncClassic)
-        // {
-        //    Chararef->SlowFallComponent->ProcessEvent(SlowFallFuncClassic, nullptr);
-        // }
-
         if(USlowFallComponent* comp = Chararef->SlowFallComponent)
         {
             comp->GravityClassic();
         }
-        Chararef->LaunchCharacter(Chararef->GetActorUpVector()*m_MushroomPower, true, true);
+        Chararef->LaunchCharacter(Arrow->GetForwardVector() * m_MushroomPower, true, true);
     }
 }

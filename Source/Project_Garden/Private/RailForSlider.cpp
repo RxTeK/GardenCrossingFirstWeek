@@ -64,8 +64,7 @@ void ARailForSlider::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	PlayerRef->bAttach = true;
 
 	// Calculer la distance sur la spline **depuis la position actuelle du joueur**
-	Distance = SplineComponent->GetDistanceAlongSplineAtLocation(PlayerRef->GetActorLocation(),
-																 ESplineCoordinateSpace::World);
+	Distance = SplineComponent->GetDistanceAlongSplineAtLocation(PlayerRef->GetActorLocation(),ESplineCoordinateSpace::World);
 
 	// Déterminer le signe selon la direction du joueur
 	FVector PlayerForward = PlayerRef->GetActorForwardVector();
@@ -171,7 +170,7 @@ void ARailForSlider::DetachPlayer()
 	if (!PlayerRef) return;
 
 	PlayerRef->bAttach = false;
-	
+		
 	if (PlayerRef->GetCharacterMovement())
 	{
 		PlayerRef->GetCharacterMovement()->SetMovementMode(MOVE_Walking);

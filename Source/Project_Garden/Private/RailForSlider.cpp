@@ -24,7 +24,7 @@ ARailForSlider::ARailForSlider()
 
 	// Taille et collision par défaut
 	BoxComponent->SetBoxExtent(FVector(32.f, 32.f, 32.f));
-BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	BoxComponent->SetCollisionObjectType(ECC_WorldDynamic);
 	BoxComponent->SetCollisionResponseToAllChannels(ECR_Overlap);
 	BoxComponent->SetGenerateOverlapEvents(true);
@@ -51,15 +51,11 @@ void ARailForSlider::BeginPlay()
 	Super::BeginPlay();
 }
 
-void ARailForSlider::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-									  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-									  bool bFromSweep, const FHitResult& SweepResult)
+void ARailForSlider::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (!OtherActor) return;
-
 	AMyProject8Character* Player = Cast<AMyProject8Character>(OtherActor);
 	if (!Player) return;
-
 	PlayerRef = Player;
 	PlayerRef->bAttach = true;
 
@@ -120,6 +116,7 @@ void ARailForSlider::GenerateMeshes()
 
 void ARailForSlider::BoxMovement(float DeltaTime)
 {
+	if (!PlayerRef) return;
 	ACharacter* PlayerChar = UGameplayStatics::GetPlayerCharacter(this, 0);
 	if (!PlayerChar) return;
 
@@ -136,6 +133,8 @@ void ARailForSlider::BoxMovement(float DeltaTime)
 
 void ARailForSlider::MovementOnSpline()
 {
+	if (!PlayerRef) return;
+	
 	if (!PlayerRef->bAttach && PlayerRef)
 	{
 		Distance = SplineComponent->GetDistanceAlongSplineAtLocation(BoxComponent->GetComponentLocation(), ESplineCoordinateSpace::World);

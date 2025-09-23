@@ -39,7 +39,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Spline")
 	float SpeedOnSpline = 1000.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Actor")
+	UPROPERTY()
 	AMyProject8Character* PlayerRef;
 
 	UPROPERTY()

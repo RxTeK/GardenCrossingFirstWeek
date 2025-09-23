@@ -30,8 +30,13 @@ public:
 	// Sets default values for this actor's properties
 	AGrapPoint();
 	
-	void CanGrap(bool, FSlateBrush);
-	
+	void CanGrap(bool);
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	FSlateBrush GrabbedImage;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	FSlateBrush CantGrabImage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	UArrowComponent* Arrow;

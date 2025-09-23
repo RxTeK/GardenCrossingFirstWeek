@@ -33,7 +33,6 @@ AGrapPoint::AGrapPoint()
 void AGrapPoint::BeginPlay()
 {
 	Super::BeginPlay();
-	Widget->SetVisibility(false);
 	if (Widget)
 	{
 		if (UUserWidget* UserWidget = Widget->GetUserWidgetObject())
@@ -41,6 +40,7 @@ void AGrapPoint::BeginPlay()
 			GrapPointWidget = Cast<UGrapPointWidget>(UserWidget);
 			if (GrapPointWidget)
 			{
+				CanGrap(false);
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Blue, "GrapPointWidget");
 			}
 		}
@@ -53,20 +53,20 @@ void AGrapPoint::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	if (GetWorld()->GetFirstPlayerController()->GetPawn() != nullptr)
 	{
+		Widget->SetWorldRotation(UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation()));
 		Arrow->SetWorldRotation(UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation()));
-		
+
 	}
 }
 
-void AGrapPoint::CanGrap(bool Grap, FSlateBrush GrappImage)
+void AGrapPoint::CanGrap(bool GrapOrNot)
 {
 	if (Widget != nullptr)
 	{
-		Widget->SetVisibility(Grap);
 		if (GrapPointWidget != nullptr && GrapPointWidget->GrapPointImage != nullptr)
 		{
 			GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::Red,"Grap Point Widget True");
-			GrapPointWidget->GrapPointImage->SetBrush(GrappImage);
+			GrapPointWidget->GrapPointImage->SetBrush(GrapOrNot ? GrabbedImage : CantGrabImage);
 		}
 		else
 		{

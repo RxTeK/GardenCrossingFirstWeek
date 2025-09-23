@@ -75,18 +75,15 @@ void USwimComponent::CalculateSwingForce()
 		{
 			PlayerRef->CableComponentRef->SetWorldLocation(GetGrabStartLocation);
 			PlayerRef->CableComponentRef->EndLocation = PlayerRef->GetMesh()->GetSocketTransform(FName("hand_r"),ERelativeTransformSpace::RTS_Actor).GetLocation();
-			const float Value = ((PlayerRef->GetActorLocation().Z + 500.0f) > PlayerRef->BestGrapPoint->GetActorLocation().Z) ? 1.5f : 0.0f;
-			const float Force = FMath::Abs(Value * 2.0f);
-			PlayerRef->GetCharacterMovement()->GravityScale = Force;
+			PlayerRef->GetCharacterMovement()->GravityScale = 0.f;
 			PlayerRef->GetCharacterMovement()->AirControl = 2.0f;
 			
 			float MyValue = PlayerRef->MovementVector.Length();
 			GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow,FString::SanitizeFloat(MyValue));
-			if (PlayerRef->MovementVector.Length() <= 0.1f && PlayerRef->MovementVector.Length() >= -0.1f)
-			{
-				FVector NewDirection = (PlayerRef->BestGrapPoint->GetActorLocation() - PlayerRef->GetActorLocation()).GetSafeNormal(1E-08) * 5.0f;
-				PlayerRef->GetCharacterMovement()->AddInputVector(FVector(NewDirection.X, NewDirection.Y, 0.0f));
-			}
+
+			FVector NewDirection = (FVector(PlayerRef->BestGrapPoint->GetActorLocation().X, PlayerRef->BestGrapPoint->GetActorLocation().Y, PlayerRef->BestGrapPoint->GetActorLocation().Z -
+				(FVector::Dist(PlayerRef->BestGrapPoint->GetActorLocation(),PlayerRef->GetActorLocation()))) - PlayerRef->GetActorLocation()).GetSafeNormal(1E-08);
+			PlayerRef->GetCharacterMovement()->AddImpulse(NewDirection*1000);
 			
 			FVector DiffPlayerAndPoint = PlayerRef->GetActorLocation()-GetGrabStartLocation;
 			FVector Direction = (DiffPlayerAndPoint.GetSafeNormal(1E-8) * (FVector::DotProduct(PlayerRef->GetVelocity(),DiffPlayerAndPoint)))* -5.0f;
@@ -117,10 +114,11 @@ bool USwimComponent::IsMovingOnGround()
 	QueryParams.bTraceComplex = false;
 	QueryParams.bReturnPhysicalMaterial = false;
 	
-	float CapsuleRadius = PickA ? 150.0f : 25.0f;
+	float CapsuleRadius = PickA ? 100.0f : 25.0f;
 	float CapsuleHalfHeight = 25.0f;
 	const FCollisionShape CapsuleShape = FCollisionShape::MakeCapsule(CapsuleRadius, CapsuleHalfHeight);
 	bool bHit = GetWorld()->SweepSingleByChannel(Hit,PlayerRef->GetActorLocation(),PlayerRef->GetActorLocation() + (PlayerRef->GetActorUpVector() * -200.0f), FQuat::Identity, TraceChanel, CapsuleShape, QueryParams);
+	DrawDebugSweptSphere(GetWorld(), PlayerRef->GetActorLocation(),PlayerRef->GetActorLocation() + (PlayerRef->GetActorUpVector() * -200.0f),CapsuleRadius,FColor::Blue);
 	PickA = bHit;
 	return bHit;
 }

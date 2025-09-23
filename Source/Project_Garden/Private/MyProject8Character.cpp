@@ -120,20 +120,20 @@ void AMyProject8Character::Tick(float DeltaTime)
 			if (height(BestGrapPoint) >= 100.0f || SlowFallComponent->AlreadyPlane)
 			{
 				bAttached = false;
-				BestGrapPoint->CanGrap(true, SwimComponentRef->CantGrabImage);
+				BestGrapPoint->CanGrap(false);
 				BestGrapPoint = nullptr;
 			}
 			
 			else
 			{
-				BestGrapPoint->CanGrap(true, SwimComponentRef->GrabbedImage);
+				BestGrapPoint->CanGrap(true);
 
 			}
 		}
 		
 		else if (BestGrapPoint != nullptr)
 		{
-			BestGrapPoint->CanGrap(false, SwimComponentRef->CantGrabImage);
+			BestGrapPoint->CanGrap(false);
 			BestGrapPoint = nullptr;
 		}
 		
@@ -161,7 +161,7 @@ void AMyProject8Character::OnComponentEndOverlap(UPrimitiveComponent* Overlapped
 	if (AGrapPoint* NewPoint = Cast<AGrapPoint>(OtherActor))
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10.0f, FColor::Red, TEXT("Grap Points None!"));
-		NewPoint->CanGrap(false, SwimComponentRef->CantGrabImage);
+		NewPoint->CanGrap(false);
 		if (std::ranges::find(GrapPoints, NewPoint) != GrapPoints.end())
 		{
 			GrapPoints.erase(std::ranges::find(GrapPoints, NewPoint));

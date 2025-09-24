@@ -377,6 +377,7 @@ void AMyProject8Character::DetachPlayer()
 	FVector DetachImpulse = GetActorForwardVector() * 1500.0f + FVector(0,0,1000.f);
 	LaunchCharacter(DetachImpulse, true, true);
 	SpeedEffectOff();
+	GetWorldTimerManager().ClearTimer(TimerHandle);
 }
 
 void AMyProject8Character::Move(const FInputActionValue& Value)

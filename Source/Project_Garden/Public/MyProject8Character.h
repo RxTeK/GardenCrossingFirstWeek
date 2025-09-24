@@ -98,6 +98,8 @@ public:
 	UFUNCTION()
 	void DetachPlayer();
 
+	FTimerHandle TimerHandle;
+
 protected:
 
 	/** Called for movement input */

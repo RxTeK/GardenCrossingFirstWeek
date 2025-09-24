@@ -57,24 +57,14 @@ void ARailForSlider::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	if (!Player) return;
 	PlayerRef = Player;
 	PlayerRef->bAttach = true;
-	OnOverlap = true;
-	FTimerHandle TimerHandle;
-	GetWorldTimerManager().SetTimer(
-	TimerHandle,
-	this,
-	&ARailForSlider::MovementOnSpline, // pointeur vers la fonction
-	GetWorld()->GetDeltaSeconds(), // délai entre appels
-	true // boucle ?
-);
-
-
+	GetWorldTimerManager().SetTimer(PlayerRef->TimerHandle,this, &ARailForSlider::MovementOnSpline,GetWorld()->GetDeltaSeconds(),true);
+	
 	// Calculer la distance sur la spline **depuis la position actuelle du joueur**
 	Distance = SplineComponent->GetDistanceAlongSplineAtLocation(PlayerRef->GetActorLocation(),ESplineCoordinateSpace::World);
 
 	// Déterminer le signe selon la direction du joueur
 	FVector PlayerForward = PlayerRef->GetActorForwardVector();
-	FVector SplineDir = SplineComponent->GetLocationAtDistanceAlongSpline(Distance + 1, ESplineCoordinateSpace::World)
-					   - SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);
+	FVector SplineDir = SplineComponent->GetLocationAtDistanceAlongSpline(Distance + 1, ESplineCoordinateSpace::World) - SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);
 
 	Sign = (FVector::DotProduct(PlayerForward, SplineDir) > 0) ? 1.0f : -1.0f;
 
@@ -88,7 +78,6 @@ void ARailForSlider::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 
 void ARailForSlider::GenerateMeshes()
 {
-	// Nettoyer d’anciens composants
 	TArray<USplineMeshComponent*> OldMeshes;
 	GetComponents(OldMeshes);
 	for (auto* Comp : OldMeshes)
@@ -187,5 +176,5 @@ void ARailForSlider::DetachPlayer()
 	FVector DetachImpulse = PlayerRef->GetActorForwardVector() * 1500.0f + FVector(0,0,1000.f);
 	PlayerRef->LaunchCharacter(DetachImpulse, true, true);
 	PlayerRef->SpeedEffectOff();
-	OnOverlap = false;
+	GetWorldTimerManager().ClearTimer(PlayerRef->TimerHandle);
 }

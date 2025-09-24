@@ -20,7 +20,6 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void Tick(float DeltaTime) override;
-	bool OnOverlap = false;
 
 public:
 	/** Spline */

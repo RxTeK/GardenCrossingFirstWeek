@@ -43,11 +43,14 @@ void ARailForSlider::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	BoxMovement(DeltaTime);
+	GenerateMeshes();
+	
 }
 
 void ARailForSlider::BeginPlay()
 {
 	Super::BeginPlay();
+	PlayerRef = Cast<AMyProject8Character>(UGameplayStatics::GetPlayerCharacter(GetWorld(),  0));
 }
 
 void ARailForSlider::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,bool bFromSweep, const FHitResult& SweepResult)

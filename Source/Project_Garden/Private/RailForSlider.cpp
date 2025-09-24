@@ -43,7 +43,6 @@ void ARailForSlider::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	BoxMovement(DeltaTime);
-	MovementOnSpline();
 }
 
 void ARailForSlider::BeginPlay()
@@ -58,6 +57,16 @@ void ARailForSlider::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	if (!Player) return;
 	PlayerRef = Player;
 	PlayerRef->bAttach = true;
+	OnOverlap = true;
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(
+	TimerHandle,
+	this,
+	&ARailForSlider::MovementOnSpline, // pointeur vers la fonction
+	GetWorld()->GetDeltaSeconds(), // délai entre appels
+	true // boucle ?
+);
+
 
 	// Calculer la distance sur la spline **depuis la position actuelle du joueur**
 	Distance = SplineComponent->GetDistanceAlongSplineAtLocation(PlayerRef->GetActorLocation(),ESplineCoordinateSpace::World);
@@ -178,4 +187,5 @@ void ARailForSlider::DetachPlayer()
 	FVector DetachImpulse = PlayerRef->GetActorForwardVector() * 1500.0f + FVector(0,0,1000.f);
 	PlayerRef->LaunchCharacter(DetachImpulse, true, true);
 	PlayerRef->SpeedEffectOff();
+	OnOverlap = false;
 }

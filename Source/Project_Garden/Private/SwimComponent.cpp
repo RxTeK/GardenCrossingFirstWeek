@@ -46,6 +46,7 @@ void USwimComponent::GrabStart()
 		PlayerRef->CableComponentRef->EndLocation = PlayerRef->GetMesh()->GetSocketTransform(FName("hand_r"),ERelativeTransformSpace::RTS_Actor).GetLocation();
 		LenghtOfGrab = ((PlayerRef->GetActorLocation() - GetGrabStartLocation).Length()) - 400.0f;
 		PlayerRef->CableComponentRef->CableLength = LenghtOfGrab;
+		Lenght = 0.0f;
 		Grabbed = true;
 	}
 }
@@ -73,6 +74,10 @@ void USwimComponent::CalculateSwingForce()
 	{
 		if (!IsMovingOnGround())
 		{
+			if (Lenght == 0.0f)
+			{
+				Lenght = FVector::Dist(PlayerRef->GetActorLocation(),GetGrabStartLocation);
+			}
 			PlayerRef->CableComponentRef->SetWorldLocation(GetGrabStartLocation);
 			PlayerRef->CableComponentRef->EndLocation = PlayerRef->GetMesh()->GetSocketTransform(FName("hand_r"),ERelativeTransformSpace::RTS_Actor).GetLocation();
 			PlayerRef->GetCharacterMovement()->GravityScale = 0.f;
@@ -80,21 +85,24 @@ void USwimComponent::CalculateSwingForce()
 			
 			float MyValue = PlayerRef->MovementVector.Length();
 			GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow,FString::SanitizeFloat(MyValue));
-
-			FVector NewDirection = (FVector(PlayerRef->BestGrapPoint->GetActorLocation().X, PlayerRef->BestGrapPoint->GetActorLocation().Y, PlayerRef->BestGrapPoint->GetActorLocation().Z -
-				(FVector::Dist(PlayerRef->BestGrapPoint->GetActorLocation(),PlayerRef->GetActorLocation()))) - PlayerRef->GetActorLocation()).GetSafeNormal(1E-08);
-			PlayerRef->GetCharacterMovement()->AddImpulse(NewDirection*1000);
+			
 			
 			FVector DiffPlayerAndPoint = PlayerRef->GetActorLocation()-GetGrabStartLocation;
 			FVector Direction = (DiffPlayerAndPoint.GetSafeNormal(1E-8) * (FVector::DotProduct(PlayerRef->GetVelocity(),DiffPlayerAndPoint)))* -5.0f;
-			
 			PlayerRef->GetCharacterMovement()->AddForce(Direction);
+			
+
+			FVector DiffPlayerAndPointsVector = FVector(GetGrabStartLocation.X, GetGrabStartLocation.Y, (GetGrabStartLocation.Z - Lenght)) - PlayerRef->GetActorLocation(); 
+			PlayerRef->GetCharacterMovement()->AddForce(DiffPlayerAndPointsVector.GetSafeNormal(1E-08) * 150000.0f);
+
+			
 		}
 		else
 		{
 			PlayerRef->CableComponentRef->SetWorldLocation(GetGrabStartLocation);
 			PlayerRef->CableComponentRef->EndLocation = PlayerRef->GetMesh()->GetSocketTransform(FName("hand_r"),ERelativeTransformSpace::RTS_Actor).GetLocation();
 			float NewCableRange = (PlayerRef->GetActorLocation() - GetGrabStartLocation).Length() - 400.0f;
+			Lenght = 0.0f;
 			PlayerRef->CableComponentRef->CableLength = NewCableRange;
 		}
 	}
@@ -118,6 +126,7 @@ bool USwimComponent::IsMovingOnGround()
 	float CapsuleHalfHeight = 25.0f;
 	const FCollisionShape CapsuleShape = FCollisionShape::MakeCapsule(CapsuleRadius, CapsuleHalfHeight);
 	bool bHit = GetWorld()->SweepSingleByChannel(Hit,PlayerRef->GetActorLocation(),PlayerRef->GetActorLocation() + (PlayerRef->GetActorUpVector() * -200.0f), FQuat::Identity, TraceChanel, CapsuleShape, QueryParams);
+	DrawDebugSweptSphere(GetWorld(), PlayerRef->GetActorLocation(),PlayerRef->GetActorLocation() + (PlayerRef->GetActorUpVector() * -200.0f),CapsuleRadius,FColor::Blue);
 	PickA = bHit;
 	return bHit;
 }

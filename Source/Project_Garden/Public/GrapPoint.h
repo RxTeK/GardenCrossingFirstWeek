@@ -11,6 +11,7 @@
 #include "GrapPoint.generated.h"
 
 
+class AMyProject8Character;
 class UGrapPointWidget;
 
 UCLASS()
@@ -48,6 +49,9 @@ protected:
 
 	UPROPERTY()
 	UGrapPointWidget* GrapPointWidget;
+
+	UPROPERTY()
+	AMyProject8Character* Player;
 
 public:	
 	// Called every frame

@@ -5,9 +5,9 @@
 #include "Components/WidgetComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Engine/World.h"
-#include "GameFramework/Character.h"
-#include "Kismet/GameplayStatics.h"
+#include "MyProject8Character.h"
 #include "GrapPointWidget.h"
+#include "Camera/CameraComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -45,15 +45,16 @@ void AGrapPoint::BeginPlay()
 			}
 		}
 	}
+	Player = Cast<AMyProject8Character>(GetWorld()->GetFirstPlayerController()->GetPawn());
 }
 
 // Called every frame
 void AGrapPoint::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (GetWorld()->GetFirstPlayerController()->GetPawn() != nullptr)
+	if (Player != nullptr)
 	{
-		Widget->SetWorldRotation(UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation()));
+		Widget->SetWorldRotation(UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(),Player->GetFollowCamera()->GetComponentLocation()));
 		Arrow->SetWorldRotation(UKismetMathLibrary::FindLookAtRotation(this->GetActorLocation(), GetWorld()->GetFirstPlayerController()->GetPawn()->GetActorLocation()));
 
 	}

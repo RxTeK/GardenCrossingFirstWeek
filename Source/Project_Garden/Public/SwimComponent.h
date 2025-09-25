@@ -33,6 +33,7 @@ public:
 	bool Grabbed;
 	float GravityScaleBase;
 	bool PickA;
+	float Lenght;
 
 	
 

@@ -30,15 +30,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UBoxComponent* BoxComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Spline")
-	UStaticMesh* MeshToUse;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Spline")
-	float StepDistance = 100.f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Spline")
-	float SpeedOnSpline = 1000.f;
-
 	UPROPERTY()
 	AMyProject8Character* PlayerRef;
 
@@ -53,6 +44,18 @@ public:
 
 	UFUNCTION()
 	void DetachPlayer();
+
+	bool OnSpline;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Rail")
+	UStaticMesh* MeshToUse;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Rail")
+	float StepDistance = 200.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Rail")
+	float SpeedOnSpline = 600.f;
+
 	
 private:
 	void GenerateMeshes();

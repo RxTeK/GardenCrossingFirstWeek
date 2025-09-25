@@ -43,6 +43,10 @@ void ARailForSlider::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	BoxMovement(DeltaTime);
+	if(OnSpline)
+	{
+		MovementOnSpline();
+	}
 	
 }
 
@@ -59,7 +63,8 @@ void ARailForSlider::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	if (!Player) return;
 	PlayerRef = Player;
 	PlayerRef->bAttach = true;
-	GetWorldTimerManager().SetTimer(PlayerRef->TimerHandle,this, &ARailForSlider::MovementOnSpline,GetWorld()->GetDeltaSeconds(),true);
+	OnSpline = true;
+	Player->Slider = this;
 	
 	// Calculer la distance sur la spline **depuis la position actuelle du joueur**
 	Distance = SplineComponent->GetDistanceAlongSplineAtLocation(PlayerRef->GetActorLocation(),ESplineCoordinateSpace::World);
@@ -84,9 +89,12 @@ void ARailForSlider::GenerateMeshes()
 	GetComponents(OldMeshes);
 	for (auto* Comp : OldMeshes)
 	{
-		Comp->DestroyComponent();
+		if (Comp && Comp->IsValidLowLevel())
+		{
+			Comp->DestroyComponent();
+		}
 	}
-
+	
 	if (!MeshToUse || !SplineComponent) return;
 
 	const float SplineLength = SplineComponent->GetSplineLength();
@@ -102,14 +110,19 @@ void ARailForSlider::GenerateMeshes()
 		const FVector EndPos = SplineComponent->GetLocationAtDistanceAlongSpline(Distancer, ESplineCoordinateSpace::Local);
 		const FVector EndTangent = SplineComponent->GetTangentAtDistanceAlongSpline(Distancer, ESplineCoordinateSpace::Local);
 
-		USplineMeshComponent* SplineMesh = NewObject<USplineMeshComponent>(this);
-		SplineMesh->SetCollisionResponseToAllChannels(ECR_Block);
+		// 3. Créer un nouveau composant dynamique
+		USplineMeshComponent* SplineMesh = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
+
 		if (SplineMesh)
 		{
-			SplineMesh->RegisterComponent();
-			SplineMesh->SetStaticMesh(MeshToUse);
 			SplineMesh->AttachToComponent(SplineComponent, FAttachmentTransformRules::KeepRelativeTransform);
+			SplineMesh->SetStaticMesh(MeshToUse);
+			SplineMesh->SetMobility(EComponentMobility::Movable); // pour runtime
+			SplineMesh->RegisterComponent();
+			
 			SplineMesh->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent);
+			SplineMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			SplineMesh->SetCollisionResponseToAllChannels(ECR_Block);
 		}
 	}
 }
@@ -178,5 +191,5 @@ void ARailForSlider::DetachPlayer()
 	FVector DetachImpulse = PlayerRef->GetActorForwardVector() * 1500.0f + FVector(0,0,1000.f);
 	PlayerRef->LaunchCharacter(DetachImpulse, true, true);
 	PlayerRef->SpeedEffectOff();
-	GetWorldTimerManager().ClearTimer(PlayerRef->TimerHandle);
+	OnSpline = false;
 }

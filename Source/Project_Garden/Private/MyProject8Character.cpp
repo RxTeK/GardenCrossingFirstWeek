@@ -22,7 +22,9 @@
 #include "MainWidget.h"
 #include "SwimComponent.h"
 #include "ClimbingComponent.h"
+#include "RailForSlider.h"
 #include "SlingshotComponent.h"
+#include "RailForSlider.h"
 #include "Kismet/KismetMathLibrary.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -183,7 +185,6 @@ void AMyProject8Character::newJump()
 
 	float Radius = 26.f;
 	bHit = GetWorld()->SweepSingleByChannel(HitResult,Start,End,FQuat::Identity,ECC_Visibility,FCollisionShape::MakeSphere(Radius),Params);
-	DrawDebugSweptSphere(GetWorld(), Start, End, Radius, FColor::Green, false, 10.0f, 10);
 	if (bAttach)
 	{
 		DetachPlayer();
@@ -377,7 +378,7 @@ void AMyProject8Character::DetachPlayer()
 	FVector DetachImpulse = GetActorForwardVector() * 1500.0f + FVector(0,0,1000.f);
 	LaunchCharacter(DetachImpulse, true, true);
 	SpeedEffectOff();
-	GetWorldTimerManager().ClearTimer(TimerHandle);
+	Slider->OnSpline = false;
 }
 
 void AMyProject8Character::Move(const FInputActionValue& Value)

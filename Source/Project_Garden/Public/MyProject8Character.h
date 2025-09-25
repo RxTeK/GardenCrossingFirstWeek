@@ -23,6 +23,7 @@ class UInputMappingContext;
 class UInputAction;
 class ASpline;
 class UMainWidget;
+class ARailForSlider;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -90,6 +91,9 @@ public:
 	UMainWidget* MainWidgetInstance;
 
 	UPROPERTY()
+	ARailForSlider* Slider;
+
+	UPROPERTY()
 	bool BlockCam;
 
 	UPROPERTY()
@@ -97,8 +101,6 @@ public:
 
 	UFUNCTION()
 	void DetachPlayer();
-
-	FTimerHandle TimerHandle;
 
 protected:
 

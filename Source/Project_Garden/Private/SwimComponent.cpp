@@ -118,7 +118,6 @@ bool USwimComponent::IsMovingOnGround()
 	float CapsuleHalfHeight = 25.0f;
 	const FCollisionShape CapsuleShape = FCollisionShape::MakeCapsule(CapsuleRadius, CapsuleHalfHeight);
 	bool bHit = GetWorld()->SweepSingleByChannel(Hit,PlayerRef->GetActorLocation(),PlayerRef->GetActorLocation() + (PlayerRef->GetActorUpVector() * -200.0f), FQuat::Identity, TraceChanel, CapsuleShape, QueryParams);
-	DrawDebugSweptSphere(GetWorld(), PlayerRef->GetActorLocation(),PlayerRef->GetActorLocation() + (PlayerRef->GetActorUpVector() * -200.0f),CapsuleRadius,FColor::Blue);
 	PickA = bHit;
 	return bHit;
 }

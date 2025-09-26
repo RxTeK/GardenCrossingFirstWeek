@@ -84,7 +84,7 @@ void USwimComponent::CalculateSwingForce()
 			PlayerRef->GetCharacterMovement()->AirControl = 2.0f;
 			
 			float MyValue = PlayerRef->MovementVector.Length();
-			GEngine->AddOnScreenDebugMessage(-1,5.f,FColor::Yellow,FString::SanitizeFloat(MyValue));
+			GEngine->AddOnScreenDebugMessage(-1,0.f,FColor::Yellow,FString::SanitizeFloat(MyValue));
 			
 			
 			FVector DiffPlayerAndPoint = PlayerRef->GetActorLocation()-GetGrabStartLocation;
@@ -122,11 +122,10 @@ bool USwimComponent::IsMovingOnGround()
 	QueryParams.bTraceComplex = false;
 	QueryParams.bReturnPhysicalMaterial = false;
 	
-	float CapsuleRadius = PickA ? 100.0f : 25.0f;
-	float CapsuleHalfHeight = 25.0f;
+	float CapsuleRadius = PickA ? 5.0f : 2.0f;
+	float CapsuleHalfHeight = 5.0f;
 	const FCollisionShape CapsuleShape = FCollisionShape::MakeCapsule(CapsuleRadius, CapsuleHalfHeight);
 	bool bHit = GetWorld()->SweepSingleByChannel(Hit,PlayerRef->GetActorLocation(),PlayerRef->GetActorLocation() + (PlayerRef->GetActorUpVector() * -200.0f), FQuat::Identity, TraceChanel, CapsuleShape, QueryParams);
-	DrawDebugSweptSphere(GetWorld(), PlayerRef->GetActorLocation(),PlayerRef->GetActorLocation() + (PlayerRef->GetActorUpVector() * -200.0f),CapsuleRadius,FColor::Blue);
 	PickA = bHit;
 	return bHit;
 }

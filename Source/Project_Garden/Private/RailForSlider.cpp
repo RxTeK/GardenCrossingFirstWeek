@@ -89,10 +89,7 @@ void ARailForSlider::GenerateMeshes()
 	GetComponents(OldMeshes);
 	for (auto* Comp : OldMeshes)
 	{
-		if (Comp && Comp->IsValidLowLevel())
-		{
-			Comp->DestroyComponent();
-		}
+		Comp->DestroyComponent();
 	}
 	
 	if (!MeshToUse || !SplineComponent) return;
@@ -110,19 +107,15 @@ void ARailForSlider::GenerateMeshes()
 		const FVector EndPos = SplineComponent->GetLocationAtDistanceAlongSpline(Distancer, ESplineCoordinateSpace::Local);
 		const FVector EndTangent = SplineComponent->GetTangentAtDistanceAlongSpline(Distancer, ESplineCoordinateSpace::Local);
 
-		// 3. Créer un nouveau composant dynamique
-		USplineMeshComponent* SplineMesh = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
-
+		USplineMeshComponent* SplineMesh = NewObject<USplineMeshComponent>(this);
+		SplineMesh->SetCollisionResponseToAllChannels(ECR_Block);
+		
 		if (SplineMesh)
 		{
-			SplineMesh->AttachToComponent(SplineComponent, FAttachmentTransformRules::KeepRelativeTransform);
-			SplineMesh->SetStaticMesh(MeshToUse);
-			SplineMesh->SetMobility(EComponentMobility::Movable); // pour runtime
 			SplineMesh->RegisterComponent();
-			
+			SplineMesh->SetStaticMesh(MeshToUse);
+			SplineMesh->AttachToComponent(SplineComponent, FAttachmentTransformRules::KeepRelativeTransform);
 			SplineMesh->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent);
-			SplineMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-			SplineMesh->SetCollisionResponseToAllChannels(ECR_Block);
 		}
 	}
 }

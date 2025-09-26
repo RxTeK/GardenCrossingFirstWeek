@@ -82,6 +82,10 @@ AMyProject8Character::AMyProject8Character()
 	CableComponentRef = CreateDefaultSubobject<UCableComponent>(TEXT("CableComponent"));
 	CableComponentRef->SetupAttachment(RootComponent);
 
+	TrajectorySpline = CreateDefaultSubobject<USplineComponent>(TEXT("TrajectorySpline"));
+	TrajectorySpline->SetupAttachment(RootComponent);
+	TrajectorySpline->SetHiddenInGame(true);
+
 	
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
@@ -100,6 +104,7 @@ void AMyProject8Character::BeginPlay()
 			MainWidgetInstance->AddToViewport();
 		}
 	}
+	BaseAirControl = GetCharacterMovement()->GravityScale;
 	
 }
 
@@ -147,6 +152,12 @@ void AMyProject8Character::Tick(float DeltaTime)
 	}
 	UE_LOG(LogTemp, Warning, TEXT("FOV actuel = %f"), GetFollowCamera()->FieldOfView);
 
+	if (bIsMovingAfterGliding && GetCharacterMovement()->IsMovingOnGround())
+	{
+		GetCharacterMovement()->AirControl = BaseAirControl;
+		bIsMovingAfterGliding = false;
+
+	}
 }
 
 void AMyProject8Character::OnComponentOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -376,6 +387,8 @@ void AMyProject8Character::DetachPlayer()
 		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	}
 	FVector DetachImpulse = GetActorForwardVector() * 1500.0f + FVector(0,0,1000.f);
+	GetCharacterMovement()->AirControl = 2.f;
+	bIsMovingAfterGliding = true;
 	LaunchCharacter(DetachImpulse, true, true);
 	SpeedEffectOff();
 	Slider->OnSpline = false;

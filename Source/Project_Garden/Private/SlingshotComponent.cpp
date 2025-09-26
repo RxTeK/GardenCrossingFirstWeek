@@ -8,6 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values for this component's properties
@@ -41,6 +42,36 @@ void USlingshotComponent::ArmsForShot(float Lenght)
 	PlayerRef->GetCameraBoom()->TargetArmLength = FMath::FInterpTo(PlayerRef->GetCameraBoom()->TargetArmLength,Lenght,GetWorld()->DeltaTimeSeconds,7.0f);
 }
 
+void USlingshotComponent::PredictTrag()
+{
+	PlayerRef->TrajectorySpline->SetHiddenInGame(false);
+	FPredictProjectilePathParams PredictParams;
+	PredictParams.ActorsToIgnore.Add(PlayerRef);
+	PredictParams.LaunchVelocity = FVector(PlayerRef->GetFollowCamera()->GetForwardVector()*ChargePower);
+	PredictParams.StartLocation = PlayerRef->GetActorLocation() + (PlayerRef->GetFollowCamera()->GetForwardVector() * 100.f) + (PlayerRef->GetActorRightVector() * 50.f);
+	PredictParams.bTraceWithCollision = true;
+	PredictParams.ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
+	
+	FPredictProjectilePathResult PredictResult;
+	
+	UGameplayStatics::PredictProjectilePath(this,PredictParams,PredictResult);
+	for (int32 i = 0; i < PredictResult.PathData.Num(); i++)
+	{
+		const FVector& Pos = PredictResult.PathData[i].Location;
+		PlayerRef->TrajectorySpline->AddSplinePoint(Pos, ESplineCoordinateSpace::World, true);
+	}
+	PlayerRef->TrajectorySpline->UpdateSpline();
+	for (int32 i = 0; i < PredictResult.PathData.Num() - 1; i++)
+	{
+		DrawDebugLine(GetWorld(), PredictResult.PathData[i].Location, PredictResult.PathData[i + 1].Location, FColor::Green, false, 0.f, 0, 2.f);
+	}
+	for (int32 i = 0; i < PlayerRef->TrajectorySpline->GetSplineLength(); i++)
+	{
+		PlayerRef->TrajectorySpline->RemoveSplinePoint(i);
+	}
+	
+}
+
 // Called every frame
 void USlingshotComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
@@ -59,9 +90,9 @@ void USlingshotComponent::ShootStart()
 			In = true;
 			PlayerRef->GetWorldTimerManager().SetTimer(ShotTimer, [this](){this->ArmsForShot(TargetArmsLenghtForShot);}, GetWorld()->DeltaTimeSeconds, true);
 		}
-		
 		ChargePower += TickBase * 5.f;
 		ChargePower = FMath::Clamp(ChargePower,MinimalPower,MaximalPower);
+		PredictTrag();
 		FString Msg = FString::Printf(TEXT("La valeur est : %f"), ChargePower);
 		FRotator CameraRotation = PlayerRef->GetFollowCamera()->GetComponentRotation();
 		PlayerRef->SetActorRotation(FRotator(PlayerRef->GetActorRotation().Pitch, CameraRotation.Yaw, PlayerRef->GetActorRotation().Roll));

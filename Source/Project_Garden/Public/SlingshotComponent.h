@@ -48,9 +48,11 @@ protected:
 	void ArmsForShot(float Lenght);
 
 	FTimerHandle ShotTimer;
-	
-
 	float TickBase;
+
+	UFUNCTION()
+	void PredictTrag();
+
 	
 public:	
 	// Called every frame

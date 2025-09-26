@@ -10,6 +10,7 @@
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
 #include "CableComponent.h"
+#include "Components/SplineComponent.h"
 #include "MyProject8Character.generated.h"
 
 
@@ -102,6 +103,10 @@ public:
 	UFUNCTION()
 	void DetachPlayer();
 
+	
+	UPROPERTY(VisibleAnywhere)
+	USplineComponent* TrajectorySpline;
+
 protected:
 
 	/** Called for movement input */
@@ -119,6 +124,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	USphereComponent* Sphere;
+
+	UPROPERTY()
+	float BaseAirControl;
+
+	UPROPERTY()
+	bool bIsMovingAfterGliding;
 
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

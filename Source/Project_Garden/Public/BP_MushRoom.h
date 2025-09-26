@@ -20,14 +20,15 @@ public:
 	// Sets default values for this actor's properties
 	ABP_MushRoom();
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "MushRoomSettings")
-	float MushroomPower = 1000.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MushRoomSettings")
-	float MassForLaunch = 50.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mushroom")
+	float MassForLaunch = 0.5f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Mushroom")
 	float LaunchSpeed = 1200.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Mushroom")
+	float EditorGravityZ = -980.f;
+
 
 protected:
 	// Called when the game starts or when spawned

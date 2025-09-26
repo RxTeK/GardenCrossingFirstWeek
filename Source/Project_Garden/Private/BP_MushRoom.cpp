@@ -1,6 +1,7 @@
 #include "BP_MushRoom.h"
 #include "MyProject8Character.h"
 #include "SlowFallComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/GameplayStaticsTypes.h"
 #include "DrawDebugHelpers.h"
@@ -43,26 +44,26 @@ void ABP_MushRoom::OnConstruction(const FTransform& Transform)
     if (!TrajectorySpline || !Arrow)
         return;
 
-    // Reset spline
     TrajectorySpline->ClearSplinePoints();
 
-    // Params pour PredictProjectilePath
+    // Vitesse initiale du launch
+    FVector LaunchVel = Arrow->GetForwardVector() * LaunchSpeed * 0.65;
+
     FPredictProjectilePathParams PathParams;
     PathParams.StartLocation = Arrow->GetComponentLocation();
-    PathParams.LaunchVelocity = Arrow->GetForwardVector() * LaunchSpeed;
+    PathParams.LaunchVelocity = LaunchVel;
     PathParams.ProjectileRadius = 5.f;
     PathParams.MaxSimTime = 5.f;
     PathParams.bTraceWithCollision = true;
     PathParams.SimFrequency = 15.f;
     PathParams.ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
-    PathParams.OverrideGravityZ = GetWorld()->GetGravityZ(); // prend en compte gravité du monde
+
+   
+    PathParams.OverrideGravityZ = EditorGravityZ * 2.0f;
 
     FPredictProjectilePathResult PathResult;
-
-    // Calcul trajectoire
     bool bHit = UGameplayStatics::PredictProjectilePath(this, PathParams, PathResult);
-    
-    // Ajout des points dans la spline
+
     for (int32 i = 0; i < PathResult.PathData.Num(); i++)
     {
         const FVector& Pos = PathResult.PathData[i].Location;
@@ -71,12 +72,15 @@ void ABP_MushRoom::OnConstruction(const FTransform& Transform)
 
     TrajectorySpline->UpdateSpline();
 
-    // (optionnel) debug visuel
+    // Option debug visuel
     for (int32 i = 0; i < PathResult.PathData.Num() - 1; i++)
     {
-        DrawDebugLine(GetWorld(), PathResult.PathData[i].Location, PathResult.PathData[i + 1].Location, FColor::Green, false, 0.f, 0, 2.f);
+        DrawDebugLine(GetWorld(), PathResult.PathData[i].Location,
+            PathResult.PathData[i + 1].Location, FColor::Green, false, 0.f, 0, 2.f);
     }
 }
+
+
 
 // Called every frame
 void ABP_MushRoom::Tick(float DeltaTime)

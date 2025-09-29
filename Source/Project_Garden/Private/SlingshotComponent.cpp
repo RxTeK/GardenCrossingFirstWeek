@@ -47,9 +47,10 @@ void USlingshotComponent::PredictTrag()
 	PlayerRef->TrajectorySpline->SetHiddenInGame(false);
 	FPredictProjectilePathParams PredictParams;
 	PredictParams.ActorsToIgnore.Add(PlayerRef);
-	PredictParams.LaunchVelocity = FVector(PlayerRef->GetFollowCamera()->GetForwardVector()*ChargePower);
+	PredictParams.LaunchVelocity = FVector(PlayerRef->GetFollowCamera()->GetForwardVector()* (ChargePower*20.0f));
 	PredictParams.StartLocation = PlayerRef->GetActorLocation() + (PlayerRef->GetFollowCamera()->GetForwardVector() * 100.f) + (PlayerRef->GetActorRightVector() * 50.f);
 	PredictParams.bTraceWithCollision = true;
+	PredictParams.OverrideGravityZ = GetWorld()->GetGravityZ() * 1.5f;
 	PredictParams.ObjectTypes.Add(UEngineTypes::ConvertToObjectType(ECollisionChannel::ECC_WorldStatic));
 	
 	FPredictProjectilePathResult PredictResult;
@@ -58,14 +59,17 @@ void USlingshotComponent::PredictTrag()
 	for (int32 i = 0; i < PredictResult.PathData.Num(); i++)
 	{
 		const FVector& Pos = PredictResult.PathData[i].Location;
-		PlayerRef->TrajectorySpline->AddSplinePoint(Pos, ESplineCoordinateSpace::World, true);
+		if (i <= PlayerRef->TrajectorySpline->GetNumberOfSplinePoints())
+		{
+			PlayerRef->TrajectorySpline->SetLocationAtSplinePoint(i,Pos,ESplineCoordinateSpace::World);
+		}
+		else
+		{
+			PlayerRef->TrajectorySpline->AddSplinePoint(Pos, ESplineCoordinateSpace::World, true);
+		}
 	}
 	PlayerRef->TrajectorySpline->UpdateSpline();
-	for (int32 i = 0; i < PredictResult.PathData.Num() - 1; i++)
-	{
-		DrawDebugLine(GetWorld(), PredictResult.PathData[i].Location, PredictResult.PathData[i + 1].Location, FColor::Green, false, 0.f, 0, 2.f);
-	}
-	for (int32 i = 0; i < PlayerRef->TrajectorySpline->GetSplineLength(); i++)
+	for (int32 i = 0; i < PlayerRef->TrajectorySpline->GetNumberOfSplinePoints(); i++)
 	{
 		PlayerRef->TrajectorySpline->RemoveSplinePoint(i);
 	}

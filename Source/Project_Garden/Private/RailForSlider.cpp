@@ -54,6 +54,7 @@ void ARailForSlider::BeginPlay()
 {
 	Super::BeginPlay();
 	PlayerRef = Cast<AMyProject8Character>(UGameplayStatics::GetPlayerCharacter(GetWorld(),  0));
+	GenerateMeshes();
 }
 
 void ARailForSlider::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,bool bFromSweep, const FHitResult& SweepResult)
@@ -66,16 +67,13 @@ void ARailForSlider::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 	OnSpline = true;
 	Player->Slider = this;
 	
-	// Calculer la distance sur la spline **depuis la position actuelle du joueur**
 	Distance = SplineComponent->GetDistanceAlongSplineAtLocation(PlayerRef->GetActorLocation(),ESplineCoordinateSpace::World);
-
-	// Déterminer le signe selon la direction du joueur
+	
 	FVector PlayerForward = PlayerRef->GetActorForwardVector();
 	FVector SplineDir = SplineComponent->GetLocationAtDistanceAlongSpline(Distance + 1, ESplineCoordinateSpace::World) - SplineComponent->GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);
 
 	Sign = (FVector::DotProduct(PlayerForward, SplineDir) > 0) ? 1.0f : -1.0f;
-
-	// Stopper le mouvement du joueur
+	
 	if (PlayerRef->GetCharacterMovement())
 	{
 		PlayerRef->GetCharacterMovement()->SetMovementMode(MOVE_None);

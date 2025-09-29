@@ -189,7 +189,7 @@ void AMyProject8Character::newJump()
 	bCanJump = false;
 
 	FVector Start = GetActorLocation();
-	FVector End = Start - FVector(0.0f, 0.0f, 100.0f);
+	FVector End = Start - FVector(0.0f, 0.0f, 150.0f);
 	FHitResult HitResult;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);

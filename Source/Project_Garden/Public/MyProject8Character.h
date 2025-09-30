@@ -3,7 +3,6 @@
 #pragma once
 
 #include <vector>
-
 #include "CoreMinimal.h"
 #include "GrapPoint.h"
 #include "Components/SphereComponent.h"
@@ -25,6 +24,7 @@ class UInputAction;
 class ASpline;
 class UMainWidget;
 class ARailForSlider;
+class UNiagaraComponent;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -107,6 +107,9 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	USplineComponent* TrajectorySpline;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "FX")
+	UNiagaraComponent* NiagaraComp;
+
 protected:
 
 	/** Called for movement input */
@@ -124,6 +127,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	USphereComponent* Sphere;
+
+	
 
 	UPROPERTY()
 	float BaseAirControl;

@@ -4,6 +4,7 @@
 
 #include "ProjectilActor.h"
 #include "MainWidget.h"
+#include "NiagaraComponent.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -54,24 +55,10 @@ void USlingshotComponent::PredictTrag()
 	
 	FPredictProjectilePathResult PredictResult;
 	
-	UGameplayStatics::PredictProjectilePath(this,PredictParams,PredictResult);
-	for (int32 i = 0; i < PredictResult.PathData.Num(); i++)
-	{
-		const FVector& Pos = PredictResult.PathData[i].Location;
-		if (i <= PlayerRef->TrajectorySpline->GetNumberOfSplinePoints())
-		{
-			PlayerRef->TrajectorySpline->SetLocationAtSplinePoint(i,Pos,ESplineCoordinateSpace::World);
-		}
-		else
-		{
-			PlayerRef->TrajectorySpline->AddSplinePoint(Pos, ESplineCoordinateSpace::World, true);
-		}
-	}
+	UGameplayStatics::Blueprint_PredictProjectilePath_ByTraceChannel(this,PredictParams,PredictResult);
+	PlayerRef->TrajectorySpline->SetSplinePoints(PredictResult.PathData[0].Location);
 	PlayerRef->TrajectorySpline->UpdateSpline();
-	for (int32 i = 0; i < PlayerRef->TrajectorySpline->GetNumberOfSplinePoints(); i++)
-	{
-		PlayerRef->TrajectorySpline->RemoveSplinePoint(i);
-	}
+	
 	
 }
 
@@ -92,13 +79,13 @@ void USlingshotComponent::ShootStart()
 			GetWorld()->GetTimerManager().ClearTimer(ShotTimer);
 			In = true;
 			PlayerRef->GetWorldTimerManager().SetTimer(ShotTimer, [this](){this->ArmsForShot(TargetArmsLenghtForShot);}, GetWorld()->DeltaTimeSeconds, true);
+			PlayerRef->NiagaraComp->SetVisibility(true);
+			PlayerRef->bUseControllerRotationYaw = true;
 		}
 		ChargePower += TickBase * 5.f;
 		ChargePower = FMath::Clamp(ChargePower,MinimalPower,MaximalPower);
 		PredictTrag();
 		FString Msg = FString::Printf(TEXT("La valeur est : %f"), ChargePower);
-		FRotator CameraRotation = PlayerRef->GetFollowCamera()->GetComponentRotation();
-		PlayerRef->SetActorRotation(FRotator(PlayerRef->GetActorRotation().Pitch, CameraRotation.Yaw, PlayerRef->GetActorRotation().Roll));
 		GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Green, Msg);
 		GEngine->AddOnScreenDebugMessage(-1,0.0f,FColor::Blue,TEXT("ChargePower"));
 		if (PlayerRef->MainWidgetInstance)
@@ -114,6 +101,8 @@ void USlingshotComponent::ShootEnd()
 {
 	if (ProjectileClass && PlayerRef)
 	{
+		PlayerRef->NiagaraComp->SetVisibility(false);
+		PlayerRef->bUseControllerRotationYaw = false;
 		GetWorld()->GetTimerManager().ClearTimer(ShotTimer);
 		PlayerRef->GetWorldTimerManager().SetTimer(ShotTimer, [this](){this->ArmsForShot(ArmsLenghtBase);}, GetWorld()->DeltaTimeSeconds, true);
 		GEngine->AddOnScreenDebugMessage(-1,10.0f,FColor::Blue,"Shoot");

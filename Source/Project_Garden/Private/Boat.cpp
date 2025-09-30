@@ -2,7 +2,6 @@
 
 
 #include "Boat.h"
-
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -63,11 +62,13 @@ void ABoat::OnComponentOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
 		TimerDel.BindUFunction(this, FName("MoveBoat"));
 
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle,TimerDel,GetWorld()->GetDeltaSeconds(),true);
+		MoveBoat();
 	}
 }
 
 void ABoat::MoveBoat()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Reset"));
 	
 }
 

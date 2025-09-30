@@ -8,7 +8,10 @@
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "MyProject8Character.h"
+#include "SplineForBoat.h"
 #include "Boat.generated.h"
+
+class ASplineForBoat;
 
 UCLASS()
 class PROJECT_GARDEN_API ABoat : public APawn
@@ -52,7 +55,7 @@ private:
 	FTimerHandle TimerHandle;
 
 	UPROPERTY(EditAnywhere)
-	USplineComponent* Spline;
+	ASplineForBoat* SplineBoat;
 
 	UPROPERTY(EditAnywhere)
 	float Speed = 200.f;

@@ -4,7 +4,6 @@
 
 #include "ProjectilActor.h"
 #include "MainWidget.h"
-#include "MaterialHLSLTree.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
